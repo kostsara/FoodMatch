@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Омлет з сиром – FoodMatch</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        /* --- ЗАГАЛЬНІ СТИЛІ (Global) --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: #f5f5f7;
+            color: #111827;
+            line-height: 1.6;
+        }
+
+        a { text-decoration: none; color: inherit; transition: 0.2s; }
+        ul, ol { list-style: none; }
+
+        /* HEADER */
+        header {
+            position: sticky; top: 0; z-index: 50;
+            backdrop-filter: blur(10px); background: rgba(245, 245, 247, 0.95);
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .nav {
+            max-width: 1100px; margin: 0 auto; padding: 12px 20px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .logo { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 1.3rem; }
+        .logo span { color: #f97316; }
+        
+        .nav-links { display: flex; gap: 24px; font-size: 0.9rem; font-weight: 500; }
+        .nav-links a:hover { color: #f97316; }
+        .nav-btn {
+            background: #111827; color: white; padding: 8px 18px; border-radius: 99px;
+            font-size: 0.9rem; font-weight: 600; transition: 0.2s;
+        }
+        .nav-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+
+        /* --- PAGE LAYOUT --- */
+        .container { max-width: 1000px; margin: 0 auto; padding: 30px 20px 60px; }
+
+        /* BREADCRUMBS (Хлібні крихти) */
+        .breadcrumbs { font-size: 0.85rem; color: #6b7280; margin-bottom: 20px; }
+        .breadcrumbs a:hover { color: #f97316; text-decoration: underline; }
+
+        /* HERO SECTION */
+        .recipe-hero {
+            background: white; border-radius: 24px; overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 30px;
+        }
+        .hero-img {
+            width: 100%; height: 400px; object-fit: cover; background: #ffedd5;
+        }
+        .hero-content { padding: 30px; position: relative; }
+        
+        .recipe-title { font-size: 2.2rem; font-weight: 800; margin-bottom: 10px; line-height: 1.2; }
+        .recipe-meta { display: flex; gap: 20px; color: #4b5563; font-size: 0.95rem; align-items: center; flex-wrap: wrap; }
+        .meta-item { display: flex; align-items: center; gap: 6px; }
+        
+        .save-btn {
+            position: absolute; top: 30px; right: 30px;
+            width: 44px; height: 44px; border-radius: 50%; background: #f3f4f6;
+            border: none; cursor: pointer; font-size: 1.5rem; color: #9ca3af;
+            display: flex; align-items: center; justify-content: center; transition: 0.2s;
+        }
+        .save-btn:hover { background: #fee2e2; color: #ef4444; }
+        .save-btn.active { background: #fee2e2; color: #ef4444; }
+
+        /* --- GRID CONTENT --- */
+        .recipe-grid {
+            display: grid; grid-template-columns: 1fr 340px; gap: 40px;
+        }
+
+        /* LEFT COLUMN (STEPS) */
+        .section-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        
+        .step-item { display: flex; gap: 20px; margin-bottom: 30px; }
+        .step-num {
+            flex-shrink: 0; width: 36px; height: 36px; background: #111827; color: white;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 1rem; margin-top: 4px;
+        }
+        .step-text { font-size: 1rem; color: #374151; }
+        .step-img {
+            margin-top: 10px; width: 100%; height: 200px; object-fit: cover; 
+            border-radius: 12px; display: none; /* Приховано, якщо немає фото кроку */
+        }
+
+        /* RIGHT COLUMN (INGREDIENTS) */
+        .sidebar { position: sticky; top: 90px; } /* Прилипає при скролі */
+        
+        .ingredients-card {
+            background: white; border-radius: 20px; padding: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #e5e7eb;
+        }
+
+        .ing-list { margin-bottom: 24px; }
+        .ing-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 0; border-bottom: 1px dashed #e5e7eb; font-size: 0.95rem;
+        }
+        .ing-item:last-child { border-bottom: none; }
+        .ing-name { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        
+        /* Checkbox style */
+        .custom-check {
+            width: 20px; height: 20px; border: 2px solid #d1d5db; border-radius: 6px;
+            display: inline-flex; align-items: center; justify-content: center; color: white; transition: 0.2s;
+        }
+        input[type="checkbox"] { display: none; }
+        input:checked + .custom-check { background: #166534; border-color: #166534; }
+        input:checked + .custom-check::after { content: '✓'; font-size: 12px; }
+        
+        /* Strikethrough when checked */
+        input:checked ~ span { text-decoration: line-through; color: #9ca3af; }
+
+        .ing-amount { font-weight: 600; color: #111827; }
+
+        .btn-shop {
+            width: 100%; background: #fff7ed; color: #c2410c; border: 1px solid #fdba74;
+            padding: 12px; border-radius: 12px; font-weight: 600; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            transition: 0.2s;
+        }
+        .btn-shop:hover { background: #ffedd5; }
+
+        /* NUTRITION BOX */
+        .nutrition-box {
+            margin-top: 20px; background: #f9fafb; border-radius: 16px; padding: 20px;
+            display: flex; justify-content: space-between; text-align: center;
+        }
+        .nut-item span { display: block; font-size: 0.8rem; color: #6b7280; text-transform: uppercase; }
+        .nut-item strong { display: block; font-size: 1.1rem; font-weight: 800; color: #111827; }
+
+        @media (max-width: 850px) {
+            .recipe-grid { grid-template-columns: 1fr; }
+            .sidebar { position: static; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <nav class="nav">
+            <a href="index.html" class="logo">🍽 Food<span>Match</span></a>
+            <div class="nav-links">
+                <a href="index.html">Головна</a>
+                <a href="add-recipe.html">Додати рецепт</a>
+                <a href="shopping-list.html">Список покупок</a>
+            </div>
+            <div style="display:flex; gap:10px;">
+                <a href="profile.html" class="nav-btn">👤 Кабінет</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        
+        <div class="breadcrumbs">
+            <a href="index.html">Головна</a> / <a href="#">Сніданки</a> / Омлет з сиром
+        </div>
+
+        <article class="recipe-hero">
+            <img src="https://images.unsplash.com/photo-1510693206972-df098062cb71?q=80&w=1200&auto=format&fit=crop" alt="Омлет" class="hero-img">
+            
+            <div class="hero-content">
+                <h1 class="recipe-title">Пухкий омлет з твердим сиром та зеленню</h1>
+                
+                <div class="recipe-meta">
+                    <div class="meta-item">⏱ <strong>10 хв</strong></div>
+                    <div class="meta-item">🔥 <strong>320 ккал</strong></div>
+                    <div class="meta-item">👨‍🍳 Автор: <a href="profile.html" style="text-decoration:underline;">AlexCook</a></div>
+                    <div class="meta-item">⭐️ 4.8 (120 відгуків)</div>
+                </div>
+
+                <button class="save-btn" title="Зберегти в улюблене" onclick="this.classList.toggle('active')">♥</button>
+            </div>
+        </article>
+
+        <div class="recipe-grid">
+            
+            <div class="recipe-steps">
+                <h2 class="section-title">📝 Як готувати</h2>
+                
+                <div class="step-item">
+                    <div class="step-num">1</div>
+                    <div>
+                        <p class="step-text">Збийте яйця з молоком у глибокій мисці. Додайте дрібку солі та чорного перцю. Збивайте виделкою або віночком до появи легкої піни.</p>
+                    </div>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-num">2</div>
+                    <div>
+                        <p class="step-text">Розігрійте сковороду з вершковим маслом на середньому вогні. Важливо, щоб масло не почало горіти, тому не робіть вогонь занадто сильним.</p>
+                    </div>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-num">3</div>
+                    <div>
+                        <p class="step-text">Вилийте яєчну суміш на сковороду. Зачекайте 1 хвилину, поки низ трохи схопиться. Потім посипте тертим сиром.</p>
+                    </div>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-num">4</div>
+                    <div>
+                        <p class="step-text">Складіть омлет навпіл за допомогою лопатки. Готуйте ще 1-2 хвилини під кришкою, щоб сир всередині розплавився. Подавайте гарячим, посипавши зеленню.</p>
+                    </div>
+                </div>
+
+                <div style="background:#f0fdf4; border:1px solid #bbf7d0; padding:20px; border-radius:16px; color:#166534; margin-top:30px;">
+                    <strong>💡 Порада від автора:</strong>
+                    Якщо хочете, щоб омлет був ще ніжнішим, додайте до яєць ложку сметани замість молока.
+                </div>
+
+            </div>
+
+            <aside class="sidebar">
+                <div class="ingredients-card">
+                    <h2 class="section-title">🛒 Інгредієнти</h2>
+                    <p style="color:#6b7280; font-size:0.9rem; margin-bottom:15px;">На 2 порції:</p>
+
+                    <div class="ing-list">
+                        <label class="ing-item">
+                            <div class="ing-name">
+                                <input type="checkbox">
+                                <div class="custom-check"></div>
+                                <span>Яйця</span>
+                            </div>
+                            <span class="ing-amount">3 шт</span>
+                        </label>
+
+                        <label class="ing-item">
+                            <div class="ing-name">
+                                <input type="checkbox">
+                                <div class="custom-check"></div>
+                                <span>Молоко</span>
+                            </div>
+                            <span class="ing-amount">50 мл</span>
+                        </label>
+
+                        <label class="ing-item">
+                            <div class="ing-name">
+                                <input type="checkbox">
+                                <div class="custom-check"></div>
+                                <span>Сир твердий</span>
+                            </div>
+                            <span class="ing-amount">50 г</span>
+                        </label>
+
+                        <label class="ing-item">
+                            <div class="ing-name">
+                                <input type="checkbox">
+                                <div class="custom-check"></div>
+                                <span>Масло вершкове</span>
+                            </div>
+                            <span class="ing-amount">20 г</span>
+                        </label>
+                        
+                        <label class="ing-item">
+                            <div class="ing-name">
+                                <input type="checkbox">
+                                <div class="custom-check"></div>
+                                <span>Сіль, перець</span>
+                            </div>
+                            <span class="ing-amount">за смаком</span>
+                        </label>
+                    </div>
+
+                    <button class="btn-shop" onclick="alert('Продукти додано в список!')">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        У список покупок
+                    </button>
+
+                    <div class="nutrition-box">
+                        <div class="nut-item">
+                            <span>Білки</span>
+                            <strong>18 г</strong>
+                        </div>
+                        <div class="nut-item">
+                            <span>Жири</span>
+                            <strong>24 г</strong>
+                        </div>
+                        <div class="nut-item">
+                            <span>Вугл.</span>
+                            <strong>2 г</strong>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+        </div>
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Вхід – FoodMatch</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        /* --- СТИЛІ --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { 
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; 
+            background: #f5f5f7; 
+            color: #111827; 
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .logo-container { margin-bottom: 24px; text-align: center; }
+        
+        .logo {
+            display: inline-flex; align-items: center; gap: 10px;
+            font-weight: 700; font-size: 1.5rem; text-decoration: none; color: #111827;
+        }
+
+        .logo-badge {
+            width: 40px; height: 40px; border-radius: 999px;
+            background: radial-gradient(circle at 30% 30%, #fee2e2, #f97316);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+        }
+
+        .auth-card {
+            background: #ffffff; border-radius: 24px; padding: 40px;
+            width: 100%; max-width: 400px; box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+        }
+
+        .auth-header { margin-bottom: 24px; text-align: center; }
+        .auth-header h1 { font-size: 1.5rem; margin-bottom: 8px; }
+        .auth-header p { color: #6b7280; font-size: 0.9rem; }
+
+        .form-group { margin-bottom: 16px; }
+        
+        label { display: block; font-size: 0.85rem; font-weight: 600; color: #374151; margin-bottom: 6px; }
+
+        input {
+            width: 100%; padding: 10px 14px; border: 1px solid #e5e7eb; border-radius: 12px;
+            font-size: 0.95rem; outline: none; transition: border-color 0.15s;
+        }
+        input:focus { border-color: #111827; box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.05); }
+
+        .btn-primary {
+            width: 100%; background: #111827; color: #fefce8; padding: 12px;
+            border-radius: 999px; font-weight: 600; font-size: 1rem; border: none;
+            cursor: pointer; transition: transform 0.1s; margin-top: 10px;
+        }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(15, 23, 42, 0.2); }
+
+        .auth-footer {
+            margin-top: 24px; text-align: center; font-size: 0.9rem; color: #6b7280;
+            border-top: 1px solid #f3f4f6; padding-top: 20px;
+        }
+
+        .link { color: #f97316; text-decoration: none; font-weight: 600; cursor: pointer; }
+        .link:hover { text-decoration: underline; }
+
+        .back-link {
+            display: inline-block; margin-top: 20px; color: #9ca3af; font-size: 0.85rem; text-decoration: none;
+        }
+        .back-link:hover { color: #4b5563; }
+
+        @media (max-width: 480px) { .auth-card { padding: 24px; } }
+    </style>
+</head>
+<body>
+
+    <div class="logo-container">
+        <a href="index.html" class="logo">
+            <div class="logo-badge">🍽</div>
+            FoodMatch
+        </a>
+    </div>
+
+    <div class="auth-card">
+        <div id="loginForm">
+            <div class="auth-header">
+                <h1>З поверненням!</h1>
+                <p>Введіть свої дані, щоб увійти</p>
+            </div>
+            <form>
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" placeholder="name@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Пароль</label>
+                    <input type="password" id="loginPassword" placeholder="••••••••" required>
+                </div>
+                <button type="button" id="btnLogin" class="btn-primary">Увійти</button>
+            </form>
+            <div class="auth-footer">
+                Немає акаунту? <span class="link" onclick="toggleAuth()">Зареєструватися</span>
+            </div>
+        </div>
+
+        <div id="registerForm" style="display: none;">
+            <div class="auth-header">
+                <h1>Створити акаунт</h1>
+                <p>Збережіть свої налаштування та рецепти</p>
+            </div>
+            <form>
+                <div class="form-group">
+                    <label for="regName">Імʼя</label>
+                    <input type="text" id="regName" placeholder="Як до вас звертатися?">
+                </div>
+                <div class="form-group">
+                    <label for="regEmail">Email</label>
+                    <input type="email" id="regEmail" placeholder="name@email.com">
+                </div>
+                <div class="form-group">
+                    <label for="regPassword">Пароль</label>
+                    <input type="password" id="regPassword" placeholder="Придумайте пароль">
+                </div>
+                <button type="button" id="btnRegister" class="btn-primary">Зареєструватися</button>
+            </form>
+            <div class="auth-footer">
+                Вже є акаунт? <span class="link" onclick="toggleAuth()">Увійти</span>
+            </div>
+        </div>
+    </div>
+
+    <a href="index.html" class="back-link">← Повернутися на головну</a>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script src="js/db.js"></script>
+
+    <script>
+        // --- ПЕРЕВІРКА: ЧИ МИ ВЖЕ В СИСТЕМІ? ---
+async function checkSession() {
+    const { data } = await supabase.auth.getSession();
+    if (data.session) {
+        // Якщо сесія є — одразу кидаємо в профіль
+        window.location.href = "profile.html";
+    }
+}
+checkSession();
+        // Перемикач Вхід/Реєстрація
+        function toggleAuth() {
+            const loginBlock = document.getElementById('loginForm');
+            const registerBlock = document.getElementById('registerForm');
+
+            if (loginBlock.style.display === 'none') {
+                loginBlock.style.display = 'block';
+                registerBlock.style.display = 'none';
+                document.title = "Вхід – FoodMatch";
+            } else {
+                loginBlock.style.display = 'none';
+                registerBlock.style.display = 'block';
+                document.title = "Реєстрація – FoodMatch";
+            }
+        }
+
+        // --- ЛОГІКА РЕЄСТРАЦІЇ ---
+        async function handleRegister() {
+            const name = document.getElementById('regName').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+
+            if(!email || !password) {
+                alert("Будь ласка, заповніть email та пароль");
+                return;
+            }
+
+            // Функція supabase береться з файлу js/db.js
+            const { data, error } = await supabase.auth.signUp({
+                email: email,
+                password: password,
+                options: {
+                    data: { full_name: name }
+                }
+            });
+
+            if (error) {
+                alert("Помилка: " + error.message);
+            } else {
+                alert("Успіх! Акаунт створено. Тепер спробуйте увійти.");
+                toggleAuth(); 
+            }
+        }
+
+        // --- ЛОГІКА ВХОДУ ---
+        async function handleLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: email,
+                password: password,
+            });
+
+            if (error) {
+                alert("Помилка входу: " + error.message);
+            } else {
+                // Успішний вхід -> переходимо на профіль
+                console.log("Успішний вхід:", data);
+                window.location.href = "profile.html";
+            }
+        }
+
+        // Прив'язуємо кнопки
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById('btnRegister').onclick = handleRegister;
+            document.getElementById('btnLogin').onclick = handleLogin;
+        });
+    </script>
+
+</body>
+</html>

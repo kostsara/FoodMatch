@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8" />
+    <title>FoodMatch – Головна</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* --- БАЗОВІ СТИЛІ --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: #f5f5f7; color: #111827; line-height: 1.5; }
+        a { text-decoration: none; color: inherit; }
+        button { font-family: inherit; cursor: pointer; }
+        
+        /* HEADER */
+        header { position: sticky; top: 0; z-index: 50; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid #e5e7eb; height: 70px; display: flex; align-items: center; }
+        .nav { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; }
+        .logo { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 1.4rem; }
+        .logo-badge { width: 34px; height: 34px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #fee2e2, #f97316); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+        .nav-links-center { display: flex; gap: 20px; font-size: 0.95rem; font-weight: 500; color: #4b5563; }
+        .nav-links-center a:hover { color: #f97316; }
+        .nav-btn { border-radius: 999px; background: #111827; color: #fff; padding: 8px 16px; font-size: 0.9rem; font-weight: 600; transition:0.2s; }
+        .nav-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+
+        /* LAYOUT */
+        .layout { max-width: 1200px; margin: 30px auto; padding: 0 20px 60px; display: grid; grid-template-columns: 320px 1fr; gap: 30px; align-items: start; }
+        
+        /* HERO (ПОШУК) */
+        .hero { 
+            grid-column: 1 / -1; background: white; border-radius: 24px; padding: 40px; 
+            border: 1px solid #e5e7eb; margin-bottom: 10px; 
+            background-image: linear-gradient(to right, #fff7ed, #ffffff);
+            display: flex; flex-direction: column; gap: 20px;
+        }
+        .hero h1 { font-size: 2.2rem; font-weight: 800; margin: 0; }
+        .hero h1 span { color: #f97316; }
+        
+        .main-search-wrapper { position: relative; max-width: 600px; }
+        .main-search-input { 
+            width: 100%; padding: 16px 20px 16px 50px; border-radius: 16px; 
+            border: 1px solid #e5e7eb; font-size: 1.1rem; outline: none; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03); transition: 0.2s;
+        }
+        .main-search-input:focus { border-color: #f97316; box-shadow: 0 4px 20px rgba(249, 115, 22, 0.15); }
+        .search-icon { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); font-size: 1.3rem; color: #9ca3af; }
+
+        @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } .nav-links-center { display: none; } .hero { padding: 20px; } }
+
+        /* SIDEBAR & RESULTS */
+        .sidebar, .results { background: #ffffff; border-radius: 24px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid #e5e7eb; }
+        .section-label { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #9ca3af; margin-bottom: 10px; letter-spacing: 0.5px; }
+        
+        .pill-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+        .pill-btn { border-radius: 12px; border: 1px solid #e5e7eb; padding: 8px 14px; font-size: 0.9rem; background: #fff; cursor: pointer; transition:0.2s; font-weight: 500; color: #374151; }
+        .pill-btn:hover { background: #f9fafb; border-color: #d1d5db; }
+        .pill-btn.active { background: #111827; color: #fff; border-color: #111827; }
+        .menu-btn { width: 100%; text-align: left; display: flex; align-items: center; gap: 8px; text-decoration: none; color: #374151; }
+        .menu-btn:hover { background: #fff7ed; color: #c2410c; border-color: #fdba74; }
+
+        .ingredient-input-wrapper { position: relative; margin-bottom: 10px; }
+        #ingInput { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #e5e7eb; font-size: 0.95rem; outline: none; background: #f9fafb; }
+        #ingInput:focus { border-color: #f97316; background: #fff; }
+        
+        .suggestions-box { position: absolute; top: 100%; left: 0; width: 100%; background: white; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); z-index: 100; max-height: 200px; overflow-y: auto; display: none; }
+        .suggestion-item { padding: 10px 15px; cursor: pointer; font-size: 0.9rem; border-bottom: 1px solid #f3f4f6; }
+        .suggestion-item:hover { background: #fff7ed; color: #f97316; }
+
+        .selected-tags-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; min-height: 10px; }
+        .ing-tag { background: #f97316; color: white; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 500; display: flex; align-items: center; gap: 6px; animation: popIn 0.2s ease; }
+        .ing-tag span { cursor: pointer; font-weight: bold; opacity: 0.7; padding-left: 4px; }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .quick-add-row { display: flex; flex-wrap: wrap; gap: 6px; }
+        .chip-btn { background: #ffffff; border: 1px solid #e5e7eb; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; transition: 0.1s; color: #4b5563; }
+        .chip-btn:hover { background: #f3f4f6; border-color: #d1d5db; color: #111; }
+
+        .divider { height: 1px; background: #e5e7eb; margin: 25px 0; }
+
+        /* RECIPE CARDS */
+        .recipes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+        .recipe-card { 
+            border-radius: 20px; border: 1px solid #e5e7eb; background: #fff; 
+            overflow: hidden; cursor: pointer; transition: 0.3s; display: flex; flex-direction: column;
+            position: relative; /* ДЛЯ СЕРДЕЧКА */
+        }
+        .recipe-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.08); }
+        
+        .recipe-img { width: 100%; height: 180px; object-fit: cover; background: #ffedd5; display: flex; align-items: center; justify-content: center; font-size: 2rem; }
+        .card-content { padding: 16px; flex: 1; display: flex; flex-direction: column; gap: 8px; }
+        .recipe-title { font-weight: 700; font-size: 1.1rem; line-height: 1.3; }
+        .recipe-meta { display: flex; gap: 12px; font-size: 0.85rem; color: #6b7280; }
+        .tag { border-radius: 99px; padding: 4px 10px; font-size: 0.75rem; font-weight: 600; background: #e5e7eb; display: inline-block; }
+        .tag-good { background: #dcfce7; color: #166534; }
+        .tag-missing { background: #fee2e2; color: #991b1b; }
+
+        /* HEART ON CARD */
+        .card-heart-btn { position: absolute; top: 10px; right: 10px; z-index: 5; width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.9); border: 1px solid #e5e7eb; color: #d1d5db; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .card-heart-btn:hover { transform: scale(1.1); background: white; }
+        .card-heart-btn.saved { color: #ef4444; border-color: #fee2e2; background: #fff0f0; }
+
+        /* MODAL */
+        .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(4px); }
+        .modal-backdrop.show { display: flex; }
+        .modal { background: #fff; border-radius: 24px; width: 90%; max-width: 650px; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
+        .modal-header { padding: 20px; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; }
+        .modal-title { font-size: 1.3rem; font-weight: 800; }
+        .btn-heart { background: #f3f4f6; border: none; width: 40px; height: 40px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; color: #d1d5db; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
+        .btn-heart:hover, .btn-heart.saved { background: #fee2e2; color: #ef4444; }
+        .modal-body { padding: 24px; overflow-y: auto; }
+        
+        /* GALLERY */
+        .gallery-container { position: relative; width: 100%; height: 300px; margin-bottom: 20px; border-radius: 16px; overflow: hidden; background: #000; }
+        .modal-gallery { display: flex; width: 100%; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; }
+        .modal-gallery::-webkit-scrollbar { display: none; }
+        .modal-gallery img { min-width: 100%; height: 100%; object-fit: contain; scroll-snap-align: start; background: #000; }
+        .gallery-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.2); backdrop-filter: blur(5px); color: white; border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; z-index: 2; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; transition: 0.2s; }
+        .g-prev { left: 10px; } .g-next { right: 10px; }
+
+        /* AUTHOR (ВИПРАВЛЕНО!) */
+        .author-row { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding: 12px; background: #f9fafb; border-radius: 12px; border: 1px solid #e5e7eb; }
+        .author-avatar { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: block; }
+        .author-info { display: flex; flex-direction: column; line-height: 1.3; }
+        .author-label { font-size: 0.75rem; color: #6b7280; text-transform: uppercase; font-weight: 700; }
+        .author-link { font-weight: 700; color: #111827; font-size: 0.95rem; }
+        .author-link:hover { color: #f97316; text-decoration: underline; }
+
+        /* REVIEWS (ПОВЕРНУТО!) */
+        .reviews-section { margin-top: 30px; border-top: 1px solid #e5e7eb; padding-top: 20px; }
+        .review-form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; background: #f9fafb; padding: 15px; border-radius: 12px; }
+        .review-form textarea { width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 8px; resize: none; font-family: inherit; }
+        .star-rating { display: flex; gap: 5px; cursor: pointer; font-size: 1.5rem; color: #e5e7eb; }
+        .star-rating span:hover, .star-rating span.active { color: #fbbf24; }
+        .review-item { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px dashed #e5e7eb; }
+        .review-author { font-weight: 600; font-size: 0.9rem; display: flex; justify-content: space-between; }
+        .review-text { font-size: 0.9rem; color: #4b5563; margin-top: 4px; }
+    </style>
+</head>
+
+<body>
+    <div class="page">
+        <header>
+            <nav class="nav">
+                <a href="index.html" class="logo">
+                    <div class="logo-badge">🍽</div>
+                    <div>FoodMatch</div>
+                </a>
+                <div class="nav-links-center">
+                    <a href="add-recipe.html">➕ Додати рецепт</a>
+                    <a href="shopping-list.html">🛒 Список покупок</a>
+                </div>
+                <div class="nav-actions">
+                    <a href="profile.html" class="nav-btn">👤 Кабінет</a>
+                </div>
+            </nav>
+        </header>
+
+        <main>
+            <section class="layout">
+                <div class="hero">
+                    <h1>Знайди рецепт з того, <span>що є вдома</span></h1>
+                    <div class="main-search-wrapper">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="recipeSearch" class="main-search-input" placeholder="Пошук за назвою (напр. Сирники, Борщ)...">
+                    </div>
+                </div>
+
+                <aside class="sidebar">
+                    <div class="section-label">Швидкий доступ</div>
+                    <div class="pill-row" style="flex-direction: column;">
+                        <a href="add-recipe.html" class="pill-btn menu-btn">➕ Додати свій рецепт</a>
+                        <a href="shopping-list.html" class="pill-btn menu-btn">🛒 Мій список покупок</a>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="section-label">Тип страви</div>
+                    <div class="pill-row" id="mealTypeRow">
+                        <button class="pill-btn active" data-type="all">Усі</button> 
+                        <button class="pill-btn" data-type="breakfast">Сніданок</button>
+                        <button class="pill-btn" data-type="lunch">Обід</button>
+                        <button class="pill-btn" data-type="dinner">Вечеря</button>
+                        <button class="pill-btn" data-type="dessert">Десерт</button>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="section-label">Що є в холодильнику?</div>
+                    <div class="ingredient-input-wrapper">
+                        <input type="text" id="ingInput" placeholder="Введіть продукт (напр. Курка)...">
+                        <div id="suggestionsBox" class="suggestions-box"></div>
+                    </div>
+                    <div id="selectedTags" class="selected-tags-container"></div>
+                    <div style="text-align:right; margin-bottom:15px;">
+                        <button onclick="clearTags()" style="font-size:0.8rem; color:#ef4444; background:none; border:none; cursor:pointer; text-decoration:underline;">Скинути все</button>
+                    </div>
+                    <div class="section-label" style="font-size:0.75rem; margin-bottom:5px;">Часто додають:</div>
+                    <div class="quick-add-row">
+                        <button class="chip-btn" onclick="addTag('Яйця')">🥚 Яйця</button>
+                        <button class="chip-btn" onclick="addTag('Олія')">🌻 Олія</button>
+                        <button class="chip-btn" onclick="addTag('Картопля')">🥔 Картопля</button>
+                        <button class="chip-btn" onclick="addTag('Сіль')">🧂 Сіль</button>
+                        <button class="chip-btn" onclick="addTag('Молоко')">🥛 Молоко</button>
+                    </div>
+                    <div class="divider"></div>
+                    <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:600; color:#4b5563; margin-bottom:10px;">
+                        <span>Допустимо відсутніх:</span>
+                        <strong id="missingLabel" style="color:#f97316;">2</strong>
+                    </div>
+                    <input id="missingRange" type="range" min="0" max="5" value="2" style="width:100%; accent-color:#f97316;">
+                </aside>
+
+                <section class="results">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                        <h2 style="font-size:1.5rem;">Знайдені рецепти</h2>
+                        <span id="resCount" style="color:#6b7280; font-weight:500; background:#f3f4f6; padding:4px 10px; border-radius:20px; font-size:0.85rem;">0</span>
+                    </div>
+                    <div id="recipesContainer" class="recipes-grid">
+                        <p style="color:#666; grid-column:1/-1; text-align:center; padding:40px;">⏳ Завантаження рецептів...</p>
+                    </div>
+                </section>
+            </section>
+        </main>
+    </div>
+
+    <div class="modal-backdrop" id="recipeModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div style="display:flex; align-items:center; gap:15px; flex:1;">
+                    <div class="modal-title" id="mTitle"></div>
+                    <button id="btnSaveModal" class="btn-heart" title="Зберегти">♥</button>
+                </div>
+                <button onclick="closeModal()" style="border:none; background:none; font-size:2rem; color:#9ca3af; cursor:pointer;">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="gallery-container" id="galleryContainer">
+                    <button class="gallery-btn g-prev" id="btnPrev" onclick="scrollGallery(-1)">&#10094;</button>
+                    <button class="gallery-btn g-next" id="btnNext" onclick="scrollGallery(1)">&#10095;</button>
+                    <div id="mGallery" class="modal-gallery"></div>
+                </div>
+                
+                <div id="mAuthor" class="author-row" style="display:none;"></div>
+
+                <div style="display:flex; gap:20px; margin-bottom:25px; font-size:0.95rem; color:#4b5563;">
+                    <span id="mTime"></span>
+                    <span id="mCal"></span>
+                </div>
+
+                <h3 style="font-size:1.1rem; margin-bottom:15px;">🛒 Інгредієнти</h3>
+                <ul id="mIng" style="margin-bottom:30px; padding-left:20px; list-style:none;"></ul>
+
+                <h3 style="font-size:1.1rem; margin-bottom:15px;">👩‍🍳 Приготування</h3>
+                <ol id="mSteps" style="padding-left:20px; font-size:1rem; line-height:1.7; color:#374151;"></ol>
+
+                <div class="reviews-section">
+                    <h3 class="section-label" style="margin-bottom:15px;">💬 Відгуки та оцінки</h3>
+                    <div class="review-form">
+                        <div class="star-rating" id="starRating">
+                            <span data-val="1">★</span><span data-val="2">★</span><span data-val="3">★</span><span data-val="4">★</span><span data-val="5">★</span>
+                        </div>
+                        <textarea id="reviewText" rows="2" placeholder="Напишіть, як вам страва..."></textarea>
+                        <button onclick="sendReview()" class="pill-btn active" style="width:100%; margin-top:10px; background:#111827; color:white;">Надіслати відгук</button>
+                    </div>
+                    <div id="reviewsList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/db.js"></script>
+
+    <script>
+        const ingredientsBase = ["Яйця", "Молоко", "Сир твердий", "Масло вершкове", "Сметана", "Йогурт", "Курка", "Фарш", "Свинина", "Ковбаса", "Бекон", "Риба", "Тунець", "Картопля", "Морква", "Цибуля", "Помідори", "Огірки", "Часник", "Перець", "Капуста", "Рис", "Макарони", "Гречка", "Борошно", "Хліб", "Яблука", "Банани", "Лимон", "Апельсини", "Ягоди", "Цукор", "Сіль", "Олія", "Мед", "Кетчуп", "Майонез"];
+        
+        let allRecipes = [];
+        let savedRecipeIds = new Set();
+        let currentUser = null;
+        let currentRecipeId = null;
+        let currentRating = 0;
+        let state = { type: 'all', have: new Set(), maxMissing: 2, recipeSearch: '' };
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            currentUser = user;
+            
+            const savedTags = localStorage.getItem('myFridge');
+            if(savedTags) {
+                JSON.parse(savedTags).forEach(tag => state.have.add(tag));
+                renderTags();
+            }
+
+            setupHandlers();
+            if (currentUser) await fetchSavedRecipes();
+            await fetchRecipes();
+        });
+
+        async function fetchSavedRecipes() {
+            const { data } = await supabase.from('saved_recipes').select('recipe_id').eq('user_id', currentUser.id);
+            if (data) savedRecipeIds = new Set(data.map(i => i.recipe_id));
+        }
+
+        async function fetchRecipes() {
+            // СПРОБА 1: З автором
+            let { data, error } = await supabase
+                .from('recipes')
+                .select('*, profiles(id, full_name, avatar_url)')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.warn("Помилка завантаження автора:", error.message);
+                // СПРОБА 2: Без автора (якщо збій)
+                const res = await supabase.from('recipes').select('*').order('created_at', { ascending: false });
+                data = res.data;
+            }
+            allRecipes = data || [];
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const filtered = allRecipes.filter(r => {
+                // 1. Пошук за назвою
+                if (state.recipeSearch && state.recipeSearch.trim() !== '') {
+                    return r.title.toLowerCase().includes(state.recipeSearch);
+                }
+
+                // 2. Тип
+                if (state.type !== 'all' && r.category !== state.type) return false;
+
+                // 3. Інгредієнти
+                if (!r.ingredients) return true;
+                let missingCount = 0;
+                let missingList = [];
+                r.ingredients.forEach(ing => {
+                    const name = ing.name.toLowerCase().trim();
+                    let found = false;
+                    for (let h of state.have) {
+                        if (name.includes(h.toLowerCase()) || h.includes(name)) { found = true; break; }
+                    }
+                    if (!found) { missingCount++; missingList.push(ing.name); }
+                });
+                r.missingList = missingList;
+                return missingCount <= state.maxMissing;
+            });
+            renderRecipes(filtered);
+        }
+
+        function renderRecipes(list) {
+            const container = document.getElementById('recipesContainer');
+            document.getElementById('resCount').textContent = list.length;
+            container.innerHTML = "";
+
+            if (list.length === 0) {
+                container.innerHTML = `<div style="grid-column:1/-1; padding:40px; text-align:center; color:#9ca3af;">Нічого не знайдено 😔<br>Спробуйте змінити фільтри.</div>`;
+                return;
+            }
+
+            list.forEach(r => {
+                const card = document.createElement('article');
+                card.className = 'recipe-card';
+                
+                let imgUrl = '';
+                if (r.image_url) {
+                    if (Array.isArray(r.image_url) && r.image_url.length > 0) imgUrl = r.image_url[0];
+                    else if (typeof r.image_url === 'string') imgUrl = r.image_url;
+                }
+                
+                const bgStyle = imgUrl ? `background-image: url('${imgUrl}');` : 'background: #ffedd5;';
+                const icon = imgUrl ? '' : '🍲';
+                const isSaved = savedRecipeIds.has(r.id);
+                
+                let badge = '';
+                if(!state.recipeSearch) {
+                    const missingCount = r.missingList ? r.missingList.length : 0;
+                    badge = missingCount === 0 ? `<span class="tag tag-good">Є все!</span>` : `<span class="tag tag-missing">Бракує ${missingCount}</span>`;
+                }
+
+                card.innerHTML = `
+                    <div class="recipe-img" style="${bgStyle} background-size:cover; background-position:center; display:flex; align-items:center; justify-content:center; font-size:2.5rem;">${icon}</div>
+                    <button class="card-heart-btn ${isSaved ? 'saved' : ''}" onclick="toggleMainSave(event, '${r.id}')">♥</button>
+                    <div class="card-content">
+                        <div class="recipe-title">${r.title}</div>
+                        <div class="recipe-meta"><span>⏱ ${r.time_minutes} хв</span><span>🔥 ${r.calories || 0} ккал</span></div>
+                        <div style="margin-top:auto;">${badge}</div>
+                    </div>
+                `;
+                card.onclick = (e) => {
+                    if(!e.target.classList.contains('card-heart-btn')) openModal(r);
+                };
+                container.appendChild(card);
+            });
+        }
+
+        async function toggleMainSave(e, id) {
+            e.stopPropagation();
+            if (!currentUser) return alert("Увійдіть, щоб зберігати!");
+            const btn = e.target;
+            const isSaved = btn.classList.contains('saved');
+            if (isSaved) {
+                await supabase.from('saved_recipes').delete().match({ user_id: currentUser.id, recipe_id: id });
+                btn.classList.remove('saved'); savedRecipeIds.delete(id);
+            } else {
+                await supabase.from('saved_recipes').insert([{ user_id: currentUser.id, recipe_id: id }]);
+                btn.classList.add('saved'); savedRecipeIds.add(id);
+            }
+        }
+
+        async function openModal(r) {
+            currentRecipeId = r.id;
+            document.getElementById('mTitle').textContent = r.title;
+            document.getElementById('mTime').textContent = `⏱ ${r.time_minutes} хв`;
+            document.getElementById('mCal').textContent = `🔥 ${r.calories || 0} ккал`;
+
+            // ГАЛЕРЕЯ
+            const gallery = document.getElementById('mGallery'); gallery.innerHTML = '';
+            let photos = (r.image_url && Array.isArray(r.image_url)) ? r.image_url : (r.image_url ? [r.image_url] : []);
+            if(photos.length === 0) gallery.innerHTML = '<img src="https://via.placeholder.com/400x250?text=No+Photo">';
+            else photos.forEach(url => { const img = document.createElement('img'); img.src = url; gallery.appendChild(img); });
+
+            document.getElementById('btnPrev').style.display = photos.length > 1 ? 'flex' : 'none';
+            document.getElementById('btnNext').style.display = photos.length > 1 ? 'flex' : 'none';
+
+            // АВТОР
+            const authBlock = document.getElementById('mAuthor');
+            if(r.profiles) {
+                authBlock.style.display = 'flex';
+                // Перевірка: аватарка це URL картинки чи Емодзі?
+                const ava = r.profiles.avatar_url || '👨‍🍳';
+                let avaHtml = '';
+                if (ava.startsWith('http')) {
+                     avaHtml = `<img src="${ava}" class="author-avatar">`;
+                } else {
+                     avaHtml = `<div class="author-avatar" style="display:flex;align-items:center;justify-content:center;background:#fff7ed;font-size:1.5rem;">${ava}</div>`;
+                }
+                
+                authBlock.innerHTML = `
+                    ${avaHtml}
+                    <div class="author-info">
+                        <span class="author-label">Автор рецепта</span>
+                        <a href="profile.html?id=${r.profiles.id}" class="author-link">${r.profiles.full_name}</a>
+                    </div>
+                `;
+            } else { authBlock.style.display = 'none'; }
+
+            // Інгредієнти
+            const ul = document.getElementById('mIng'); ul.innerHTML = '';
+            if(r.ingredients) r.ingredients.forEach(ing => {
+                const li = document.createElement('li'); li.style.marginBottom = '8px';
+                let haveIt = false;
+                if(!state.recipeSearch) {
+                     haveIt = Array.from(state.have).some(h => ing.name.toLowerCase().includes(h.toLowerCase()));
+                } else { haveIt = true; }
+                li.innerHTML = `${haveIt ? '✅' : '❌'} <span style="color:${haveIt ? '#111' : '#ef4444'}"><b>${ing.name}</b>: ${ing.amount}</span>`;
+                ul.appendChild(li);
+            });
+
+            // Кроки
+            const ol = document.getElementById('mSteps'); ol.innerHTML = '';
+            if(r.steps) r.steps.forEach(s => { const li = document.createElement('li'); li.textContent = s; li.style.marginBottom = '10px'; ol.appendChild(li); });
+
+            checkIfSavedInModal();
+            loadReviews();
+            document.getElementById('recipeModal').classList.add('show');
+        }
+
+        function closeModal() { document.getElementById('recipeModal').classList.remove('show'); }
+        function scrollGallery(dir) { const g = document.getElementById('mGallery'); g.scrollBy({ left: g.clientWidth * dir, behavior: 'smooth' }); }
+
+        const stars = document.querySelectorAll('.star-rating span');
+        stars.forEach(star => star.onclick = () => { currentRating = star.dataset.val; stars.forEach(s => s.classList.toggle('active', s.dataset.val <= currentRating)); });
+
+        async function sendReview() {
+            if (!currentUser) return alert("Увійдіть!");
+            const text = document.getElementById('reviewText').value;
+            if(!currentRating) return alert("Оцінка!");
+            const { error } = await supabase.from('reviews').insert([{ recipe_id: currentRecipeId, user_id: currentUser.id, rating: currentRating, comment: text }]);
+            if (!error) { document.getElementById('reviewText').value = ""; loadReviews(); }
+        }
+
+        async function loadReviews() {
+            const list = document.getElementById('reviewsList'); list.innerHTML = '...';
+            const { data: reviews } = await supabase.from('reviews').select('*, profiles(full_name)').eq('recipe_id', currentRecipeId).order('created_at', { ascending: false });
+            list.innerHTML = '';
+            if (!reviews || !reviews.length) { list.innerHTML = '<p style="color:#888; font-size:0.9rem;">Немає відгуків.</p>'; return; }
+            reviews.forEach(rev => {
+                const div = document.createElement('div'); div.className = 'review-item';
+                const stars = '⭐'.repeat(rev.rating);
+                const name = rev.profiles ? rev.profiles.full_name : 'Гість';
+                div.innerHTML = `<div class="review-author"><span>${name}</span><span style="color:#fbbf24;">${stars}</span></div><div class="review-text">${rev.comment || ''}</div>`;
+                list.appendChild(div);
+            });
+        }
+
+        const btnSaveModal = document.getElementById('btnSaveModal');
+        btnSaveModal.onclick = async () => {
+            if (!currentUser) return alert("Увійдіть!");
+            if (btnSaveModal.classList.contains('saved')) {
+                await supabase.from('saved_recipes').delete().match({ user_id: currentUser.id, recipe_id: currentRecipeId });
+                btnSaveModal.classList.remove('saved'); savedRecipeIds.delete(currentRecipeId);
+            } else {
+                await supabase.from('saved_recipes').insert([{ user_id: currentUser.id, recipe_id: currentRecipeId }]);
+                btnSaveModal.classList.add('saved'); savedRecipeIds.add(currentRecipeId);
+            }
+            applyFilters(); 
+        };
+        
+        function checkIfSavedInModal() {
+            btnSaveModal.classList.remove('saved');
+            if (savedRecipeIds.has(currentRecipeId)) btnSaveModal.classList.add('saved');
+        }
+
+        const input = document.getElementById('ingInput');
+        const suggestionsBox = document.getElementById('suggestionsBox');
+        input.addEventListener('input', (e) => {
+            const val = e.target.value.toLowerCase().trim();
+            suggestionsBox.innerHTML = '';
+            if (val.length < 1) { suggestionsBox.style.display = 'none'; return; }
+            const matches = ingredientsBase.filter(ing => ing.toLowerCase().includes(val) && !state.have.has(ing));
+            if (matches.length > 0) {
+                suggestionsBox.style.display = 'block';
+                matches.forEach(ing => {
+                    const div = document.createElement('div'); div.className = 'suggestion-item'; div.textContent = ing;
+                    div.onclick = () => { addTag(ing); input.value = ''; suggestionsBox.style.display = 'none'; };
+                    suggestionsBox.appendChild(div);
+                });
+            } else { suggestionsBox.style.display = 'none'; }
+        });
+        document.addEventListener('click', (e) => { if (!input.contains(e.target) && !suggestionsBox.contains(e.target)) suggestionsBox.style.display = 'none'; });
+
+        function addTag(name) { state.have.add(name); localStorage.setItem('myFridge', JSON.stringify(Array.from(state.have))); renderTags(); applyFilters(); }
+        function removeTag(name) { state.have.delete(name); localStorage.setItem('myFridge', JSON.stringify(Array.from(state.have))); renderTags(); applyFilters(); }
+        function clearTags() { state.have.clear(); localStorage.setItem('myFridge', JSON.stringify([])); renderTags(); applyFilters(); }
+        function renderTags() {
+            const container = document.getElementById('selectedTags'); container.innerHTML = '';
+            state.have.forEach(ing => { container.innerHTML += `<div class="ing-tag">${ing} <span onclick="removeTag('${ing}')">✕</span></div>`; });
+        }
+
+        function setupHandlers() {
+            document.querySelectorAll('#mealTypeRow button').forEach(btn => {
+                btn.onclick = () => { document.querySelectorAll('#mealTypeRow button').forEach(b => b.classList.remove('active')); btn.classList.add('active'); state.type = btn.dataset.type; applyFilters(); }
+            });
+            document.getElementById('recipeSearch').oninput = (e) => { state.recipeSearch = e.target.value.toLowerCase(); applyFilters(); };
+            document.getElementById('missingRange').oninput = (e) => { state.maxMissing = e.target.value; document.getElementById('missingLabel').textContent = e.target.value; applyFilters(); };
+            renderTags();
+        }
+    </script>
+</body>
+</html>

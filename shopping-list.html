@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Список покупок – FoodMatch</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        /* --- ЗАГАЛЬНІ СТИЛІ (Global) --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: #f5f5f7;
+            color: #111827;
+            line-height: 1.5;
+        }
+
+        a { text-decoration: none; color: inherit; }
+
+        .page { min-height: 100vh; display: flex; flex-direction: column; }
+
+        /* HEADER */
+        header {
+            position: sticky; top: 0; z-index: 50;
+            backdrop-filter: blur(10px); background: rgba(245, 245, 247, 0.95);
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .nav {
+            max-width: 1100px; margin: 0 auto; padding: 12px 20px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .logo { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 1.3rem; }
+        .logo-badge {
+            width: 34px; height: 34px; border-radius: 999px;
+            background: radial-gradient(circle at 30% 30%, #fee2e2, #f97316);
+            display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+        }
+        .nav-links-center { display: flex; gap: 20px; }
+        .nav-links-center a { font-size: 0.9rem; font-weight: 500; color: #4b5563; transition: 0.2s; }
+        .nav-links-center a:hover { color: #f97316; }
+        .nav-links-center a.active { color: #111827; font-weight: 700; }
+
+        .nav-btn {
+            border-radius: 999px; border: 1px solid #111827; background: #111827; color: #fefce8;
+            padding: 6px 14px; font-weight: 500; font-size: 0.9rem; display: inline-block; transition: 0.2s;
+        }
+        
+        /* --- SHOPPING LIST CONTENT --- */
+        .container { max-width: 600px; margin: 0 auto; padding: 30px 20px 60px; }
+
+        .page-header { 
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; 
+        }
+        .page-title { font-size: 1.8rem; font-weight: 800; }
+        
+        .clear-btn {
+            background: none; border: none; color: #ef4444; font-size: 0.9rem; 
+            cursor: pointer; font-weight: 500;
+        }
+        .clear-btn:hover { text-decoration: underline; }
+
+        /* ADD ITEM INPUT */
+        .add-box {
+            background: white; padding: 10px; border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); display: flex; gap: 10px;
+            margin-bottom: 30px; border: 1px solid #e5e7eb;
+        }
+        .add-input {
+            flex: 1; border: none; padding: 10px; font-size: 1rem; outline: none;
+        }
+        .add-btn {
+            background: #f97316; color: white; border: none; width: 44px; height: 44px;
+            border-radius: 12px; cursor: pointer; font-size: 1.5rem; display: flex; 
+            align-items: center; justify-content: center; transition: 0.2s;
+        }
+        .add-btn:hover { background: #ea580c; }
+
+        /* LIST CATEGORIES */
+        .category-section { margin-bottom: 24px; }
+        .cat-title { 
+            font-size: 0.85rem; font-weight: 700; color: #9ca3af; 
+            text-transform: uppercase; margin-bottom: 10px; padding-left: 10px;
+        }
+
+        .shopping-card {
+            background: white; border-radius: 20px; overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid #e5e7eb;
+        }
+
+        .shop-item {
+            display: flex; align-items: center; padding: 14px 20px;
+            border-bottom: 1px solid #f3f4f6; cursor: pointer; transition: 0.2s;
+        }
+        .shop-item:last-child { border-bottom: none; }
+        .shop-item:hover { background: #fafafa; }
+
+        /* Checkbox Logic */
+        .check-circle {
+            width: 24px; height: 24px; border: 2px solid #d1d5db; border-radius: 50%;
+            margin-right: 16px; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s; color: white;
+        }
+        
+        .item-text { flex: 1; font-size: 1rem; color: #111827; transition: 0.2s; }
+        .item-qty { font-size: 0.9rem; color: #6b7280; font-weight: 500; background: #f3f4f6; padding: 2px 8px; border-radius: 6px; }
+
+        /* Checked State */
+        .shop-item.checked .check-circle {
+            background: #22c55e; border-color: #22c55e;
+        }
+        .shop-item.checked .check-circle::after {
+            content: '✓'; font-size: 14px; font-weight: 700;
+        }
+        .shop-item.checked .item-text {
+            text-decoration: line-through; color: #9ca3af;
+        }
+        .shop-item.checked .item-qty {
+            opacity: 0.5;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center; padding: 60px 20px; color: #6b7280;
+        }
+        .empty-icon { font-size: 3rem; margin-bottom: 10px; display: block; opacity: 0.5; }
+
+        @media (max-width: 700px) {
+            .nav-links-center { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <nav class="nav">
+            <a href="index.html" class="logo" style="text-decoration:none; color:inherit;">
+                <div class="logo-badge">🍽</div>
+                <div>FoodMatch</div>
+            </a>
+            <div class="nav-links-center">
+                <a href="add-recipe.html">➕ Додати рецепт</a>
+                <a href="shopping-list.html" class="active">🛒 Список покупок</a>
+            </div>
+            <div class="nav-actions">
+                <a href="profile.html" class="nav-btn">👤 Кабінет</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="page-header">
+            <h1 class="page-title">Мій кошик</h1>
+            <button class="clear-btn" onclick="clearChecked()">Очистити куплене</button>
+        </div>
+
+        <div class="add-box">
+            <input type="text" class="add-input" id="newItemInput" placeholder="Наприклад: Молоко, хліб...">
+            <button class="add-btn" onclick="addNewItem()">+</button>
+        </div>
+
+        <div id="listContainer">
+            
+            <div class="category-section">
+                <div class="cat-title">Овочі та фрукти</div>
+                <div class="shopping-card">
+                    <div class="shop-item" onclick="toggleCheck(this)">
+                        <div class="check-circle"></div>
+                        <span class="item-text">Картопля</span>
+                        <span class="item-qty">2 кг</span>
+                    </div>
+                    <div class="shop-item" onclick="toggleCheck(this)">
+                        <div class="check-circle"></div>
+                        <span class="item-text">Цибуля ріпчаста</span>
+                        <span class="item-qty">3 шт</span>
+                    </div>
+                    <div class="shop-item" onclick="toggleCheck(this)">
+                        <div class="check-circle"></div>
+                        <span class="item-text">Лимон</span>
+                        <span class="item-qty">1 шт</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="category-section">
+                <div class="cat-title">Молочні продукти</div>
+                <div class="shopping-card">
+                    <div class="shop-item" onclick="toggleCheck(this)">
+                        <div class="check-circle"></div>
+                        <span class="item-text">Молоко 2.5%</span>
+                        <span class="item-qty">1 л</span>
+                    </div>
+                    <div class="shop-item" onclick="toggleCheck(this)">
+                        <div class="check-circle"></div>
+                        <span class="item-text">Масло вершкове</span>
+                        <span class="item-qty">1 п</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="category-section" id="otherCategory">
+                <div class="cat-title">Інше</div>
+                <div class="shopping-card" id="otherList">
+                    <div class="shop-item checked" onclick="toggleCheck(this)">
+                        <div class="check-circle"></div>
+                        <span class="item-text">Серветки</span>
+                        <span class="item-qty">1 п</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="empty-state" id="emptyState" style="display:none;">
+            <span class="empty-icon">🛒</span>
+            <p>Ваш список порожній.<br>Додайте продукти або оберіть рецепт.</p>
+        </div>
+
+    </main>
+
+    <script>
+        // 1. Toggle Checkbox
+        function toggleCheck(item) {
+            item.classList.toggle('checked');
+            // Тут можна додати звук або вібрацію для мобільного
+        }
+
+        // 2. Add New Item
+        function addNewItem() {
+            const input = document.getElementById('newItemInput');
+            const text = input.value.trim();
+            
+            if (text === "") return;
+
+            const list = document.getElementById('otherList');
+            
+            const newItem = document.createElement('div');
+            newItem.className = 'shop-item';
+            newItem.onclick = function() { toggleCheck(this) };
+            newItem.innerHTML = `
+                <div class="check-circle"></div>
+                <span class="item-text">${text}</span>
+                <span class="item-qty">1 шт</span>
+            `;
+            
+            // Додаємо на початок списку
+            list.insertBefore(newItem, list.firstChild);
+            input.value = "";
+        }
+
+        // Input Enter Key
+        document.getElementById('newItemInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                addNewItem();
+            }
+        });
+
+        // 3. Clear Checked Items
+        function clearChecked() {
+            const checkedItems = document.querySelectorAll('.shop-item.checked');
+            if(checkedItems.length === 0) {
+                alert("Спочатку відмітьте куплені товари!");
+                return;
+            }
+            
+            if(confirm("Видалити всі куплені товари зі списку?")) {
+                checkedItems.forEach(item => {
+                    item.style.display = 'none'; // Або item.remove()
+                });
+            }
+        }
+    </script>
+
+</body>
+</html>

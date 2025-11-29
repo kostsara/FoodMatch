@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Мій профіль – FoodMatch</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* --- ЗАГАЛЬНІ СТИЛІ --- */
+        :root {
+            --primary: #FF6B00; --primary-hover: #e65100;
+            --bg-body: #F3F4F6; --surface: #FFFFFF;
+            --text-main: #1F2937; --text-light: #6B7280;
+            --border: #E5E7EB; --radius: 16px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Inter', sans-serif; background-color: var(--bg-body);
+            color: var(--text-main); line-height: 1.5;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        input, textarea, select { font-family: inherit; }
+        
+        /* HEADER */
+        header {
+            background: var(--surface); border-bottom: 1px solid var(--border);
+            position: sticky; top: 0; z-index: 100; height: 70px;
+            display: flex; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        }
+        .nav {
+            width: 100%; max-width: 1100px; margin: 0 auto; padding: 0 20px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .logo { font-weight: 800; font-size: 1.4rem; display: flex; align-items: center; gap: 8px; }
+        .logo span { color: var(--primary); } 
+        .nav-links { display: flex; gap: 25px; font-size: 0.95rem; font-weight: 500; color: var(--text-light); }
+        .btn-add {
+            background: #111827; color: white; padding: 10px 20px; 
+            border-radius: 8px; font-size: 0.9rem; font-weight: 600; 
+            border: none; cursor: pointer; transition: 0.2s;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .btn-add:hover { background: #000; transform: translateY(-1px); }
+
+        /* CONTAINER */
+        .container {
+            max-width: 1100px; margin: 30px auto; padding: 0 20px 60px;
+            display: grid; grid-template-columns: 320px 1fr; gap: 30px; align-items: start;
+        }
+        @media (max-width: 850px) { 
+            .container { grid-template-columns: 1fr; } 
+            .nav-links { display: none; }
+        }
+
+        /* SIDEBAR */
+        .profile-card {
+            background: var(--surface); border-radius: var(--radius); padding: 30px 20px;
+            text-align: center; border: 1px solid var(--border); position: sticky; top: 100px;
+        }
+        .avatar-box {
+            width: 120px; height: 120px; margin: 0 auto 15px; border-radius: 50%;
+            background: #FFF7ED; border: 4px solid #fff; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 3.5rem; line-height: 1;
+        }
+        .avatar-box img { width: 100%; height: 100%; object-fit: cover; }
+
+        .user-name { font-size: 1.4rem; font-weight: 800; margin-bottom: 2px; }
+        .user-nick { font-size: 0.95rem; color: var(--text-light); margin-bottom: 15px; font-weight: 500; }
+        .user-bio { 
+            font-size: 0.9rem; color: #4B5563; margin-bottom: 20px; 
+            font-style: italic; background: #F9FAFB; padding: 10px; border-radius: 10px;
+            word-wrap: break-word;
+        }
+
+        .sidebar-socials { display: flex; justify-content: center; gap: 12px; margin-bottom: 25px; }
+        .social-icon {
+            width: 40px; height: 40px; border-radius: 50%; background: #F3F4F6;
+            display: flex; align-items: center; justify-content: center; color: #1F2937; transition: 0.2s;
+        }
+        .social-icon:hover { background: var(--primary); color: white; transform: translateY(-2px); }
+        .social-icon.hidden { display: none; }
+
+        .level-box {
+            text-align: left; padding: 15px; background: #FFF7ED; 
+            border-radius: 12px; border: 1px solid #FFEDD5; margin-bottom: 20px;
+        }
+        .level-header { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; color: #9A3412; }
+        .progress-bar { height: 8px; background: #FED7AA; border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--primary); width: 0%; transition: width 1s ease; }
+
+        .profile-menu { display: flex; flex-direction: column; gap: 5px; }
+        .menu-btn {
+            background: none; border: none; padding: 12px 16px; border-radius: 10px;
+            text-align: left; cursor: pointer; font-size: 0.95rem; color: #4B5563; font-weight: 600;
+            display: flex; align-items: center; gap: 12px; transition: 0.1s;
+        }
+        .menu-btn:hover { background: #F3F4F6; color: #111827; }
+        .menu-btn.active { background: #111827; color: white; }
+        .menu-btn.logout { color: #EF4444; margin-top: 10px; border-top: 1px solid #F3F4F6; border-radius: 0; }
+        .menu-btn.logout:hover { background: #FEF2F2; }
+
+        /* CONTENT */
+        .content-section { display: none; animation: fadeIn 0.3s ease; }
+        .content-section.active { display: block; }
+        
+        .settings-box { 
+            background: var(--surface); padding: 40px; 
+            border-radius: var(--radius); border: 1px solid var(--border); 
+        }
+        .form-section-title {
+            font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+            color: #9CA3AF; margin-bottom: 15px; margin-top: 30px;
+        }
+        .form-section-title:first-child { margin-top: 0; }
+
+        .avatar-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); 
+            gap: 12px; margin-bottom: 25px;
+        }
+        .avatar-option {
+            width: 60px; height: 60px; border-radius: 50%; border: 2px solid transparent;
+            cursor: pointer; transition: 0.2s; background: #FFF7ED;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; user-select: none;
+        }
+        .avatar-option:hover { transform: scale(1.1); background: #FFEDD5; }
+        .avatar-option.selected { 
+            border-color: var(--primary); background: #FFF7ED; 
+            box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.2); transform: scale(1.05); 
+        }
+        .upload-btn-grid {
+            border: 2px dashed #D1D5DB; background: white; color: #9CA3AF; font-size: 1.5rem;
+        }
+        .upload-btn-grid:hover { border-color: var(--primary); color: var(--primary); }
+
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 8px; color: #374151; }
+        .input-wrapper { position: relative; }
+        .input-icon { position: absolute; left: 14px; top: 12px; color: #9CA3AF; font-size: 1.1rem; }
+        input, textarea, select {
+            width: 100%; padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border);
+            font-size: 1rem; outline: none; background: #FFFFFF; transition: 0.2s;
+        }
+        .with-icon { padding-left: 44px; }
+        input:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.1); }
+        .social-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+        /* RECIPES LIST */
+        .recipes-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+        .recipe-mini { 
+            background: white; border: 1px solid var(--border); border-radius: 12px; 
+            overflow: hidden; cursor: pointer; transition: 0.2s; 
+        }
+        .recipe-mini:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .rm-img { 
+            height: 140px; background: #FFEDD5; 
+            display: flex; align-items: center; justify-content: center; font-size: 2.5rem;
+            background-size: cover; background-position: center;
+        }
+        .rm-body { padding: 15px; }
+        .rm-title { font-weight: 700; margin-bottom: 5px; font-size: 1rem; }
+        .rm-btn { 
+            display: block; width: 100%; padding: 8px; text-align: center; 
+            background: #F3F4F6; border-radius: 8px; font-size: 0.85rem; 
+            font-weight: 600; margin-top: 10px; color: #374151; 
+        }
+        .rm-btn:hover { background: #E5E7EB; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        @media (max-width: 850px) { 
+            .container { grid-template-columns: 1fr; } 
+            .nav-links { display: none; }
+            .profile-card { position: static; margin-bottom: 20px; }
+            .social-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <nav class="nav">
+            <a href="index.html" class="logo">🍽 Food<span>Match</span></a>
+            <div class="nav-links">
+                <a href="index.html">Головна</a>
+                <a href="add-recipe.html">Додати рецепт</a>
+                <a href="shopping-list.html">Список покупок</a>
+            </div>
+            <a href="add-recipe.html" class="btn-add">
+                <span>➕</span> Створити
+            </a>
+        </nav>
+    </header>
+
+    <div class="container">
+        
+        <aside>
+            <div class="profile-card">
+                <div class="avatar-box" id="sidebarAvatar">
+                    👤 </div>
+                
+                <div class="user-name" id="sidebarName">...</div>
+                <div class="user-nick" id="sidebarNick">@...</div>
+                <div class="user-bio" id="sidebarBio"></div>
+
+                <div class="sidebar-socials">
+                    <a href="#" target="_blank" class="social-icon hidden" id="linkInsta" title="Instagram">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                    </a>
+                    <a href="#" target="_blank" class="social-icon hidden" id="linkTiktok" title="TikTok">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path></svg>
+                    </a>
+                    <a href="#" target="_blank" class="social-icon hidden" id="linkTelegram" title="Telegram">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    </a>
+                </div>
+
+                <div class="level-box">
+                    <div class="level-header">
+                        <span id="levelName">Новачок</span>
+                        <span id="levelXP">0 XP</span>
+                    </div>
+                    <div class="progress-bar"><div class="progress-fill" id="levelFill"></div></div>
+                    <div id="xpText" style="font-size:0.75rem; color:#9ca3af; margin-top:5px; text-align:center;"></div>
+                </div>
+
+                <div class="profile-menu">
+                    <button class="menu-btn active" onclick="openTab('settings', this)">⚙️ Налаштування</button>
+                    <button class="menu-btn" onclick="openTab('my-recipes', this)">🍳 Мої рецепти</button>
+                    <button class="menu-btn" onclick="openTab('saved', this)">❤️ Збережені</button>
+                    <button class="menu-btn logout" onclick="logout()">🚪 Вийти</button>
+                </div>
+            </div>
+        </aside>
+
+        <main>
+            
+            <div id="settings" class="content-section active">
+                <h1 class="section-title" style="font-size:1.8rem; font-weight:800; margin-bottom:25px;">Налаштування профілю</h1>
+                
+                <div class="settings-box">
+                    <form onsubmit="saveProfile(event)">
+                        
+                        <div class="form-section-title">Оберіть персонажа АБО фото</div>
+                        
+                        <div class="avatar-grid" id="avatarSelector">
+                            <div class="avatar-option upload-btn-grid" onclick="document.getElementById('fileInput').click()" title="Завантажити своє фото">
+                                📷
+                            </div>
+                        </div>
+                        <input type="file" id="fileInput" hidden accept="image/*" onchange="uploadCustomAvatar(this)">
+                        <input type="hidden" id="inputAvatarUrl">
+
+                        <div class="form-section-title">Основна інформація</div>
+                        
+                        <div class="social-grid">
+                            <div class="form-group">
+                                <label>Ваше ім'я</label>
+                                <input type="text" id="inputName" placeholder="Олексій" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Нікнейм (без @)</label>
+                                <div class="input-wrapper">
+                                    <span class="input-icon">@</span>
+                                    <input type="text" id="inputNick" class="with-icon" placeholder="alex_cook">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Про себе</label>
+                            <textarea id="inputBio" rows="3" placeholder="Розкажіть про свої кулінарні вподобання..."></textarea>
+                        </div>
+
+                        <div class="form-section-title">Соціальні мережі</div>
+                        
+                        <div class="social-grid">
+                            <div class="form-group">
+                                <label>Instagram</label>
+                                <div class="input-wrapper">
+                                    <span class="input-icon">📸</span>
+                                    <input type="text" id="inputInsta" class="with-icon" placeholder="https://instagram.com/...">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>TikTok</label>
+                                <div class="input-wrapper">
+                                    <span class="input-icon">🎵</span>
+                                    <input type="text" id="inputTiktok" class="with-icon" placeholder="https://tiktok.com/...">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Telegram</label>
+                                <div class="input-wrapper">
+                                    <span class="input-icon">✈️</span>
+                                    <input type="text" id="inputTelegram" class="with-icon" placeholder="https://t.me/...">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="text-align: right; margin-top: 20px;">
+                            <button type="submit" class="btn-add" style="padding: 12px 40px; font-size: 1rem;">Зберегти зміни</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div id="my-recipes" class="content-section">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;">
+                    <h1 style="font-size:1.8rem; font-weight:800; margin:0;">Мої рецепти</h1>
+                    <a href="add-recipe.html" class="btn-add" style="font-size:0.8rem;">+ Створити</a>
+                </div>
+                <div class="recipes-list" id="myRecipesGrid">
+                    <p style="color:#6b7280;">Завантаження...</p>
+                </div>
+            </div>
+
+            <div id="saved" class="content-section">
+                <h1 style="font-size:1.8rem; font-weight:800; margin-bottom:25px;">Збережені</h1>
+                <div class="recipes-list" id="savedRecipesGrid">
+                    <p style="color:#6b7280;">Завантаження...</p>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/db.js"></script>
+
+    <script>
+        // 1. ІНІЦІАЛІЗАЦІЯ
+        const EMOJI_AVATARS = ['👨‍🍳', '👩‍🍳', '🍔', '🍕', '🥗', '🥑', '🥦', '🍓', '🍩', '🥐', '☕', '🍱'];
+        document.addEventListener('DOMContentLoaded', loadProfile);
+
+        function initAvatarSelector(currentUrl) {
+            const container = document.getElementById('avatarSelector');
+            while (container.children.length > 1) { container.removeChild(container.lastChild); }
+            EMOJI_AVATARS.forEach(emoji => {
+                const div = document.createElement('div');
+                div.className = 'avatar-option';
+                div.textContent = emoji;
+                if (currentUrl === emoji) div.classList.add('selected');
+                div.onclick = () => {
+                    selectAvatar(emoji);
+                    document.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
+                    document.querySelector('.upload-btn-grid').classList.remove('selected');
+                    div.classList.add('selected');
+                };
+                container.appendChild(div);
+            });
+        }
+
+        function selectAvatar(value) {
+            document.getElementById('inputAvatarUrl').value = value;
+            const sidebarAvatar = document.getElementById('sidebarAvatar');
+            if (value.startsWith('http')) {
+                sidebarAvatar.innerHTML = `<img src="${value}" style="width:100%; height:100%; object-fit:cover;">`;
+            } else {
+                sidebarAvatar.innerHTML = value;
+            }
+        }
+
+        // 2. ЗАВАНТАЖЕННЯ ДАНИХ
+        async function loadProfile() {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) { window.location.href = "login.html"; return; }
+
+            const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+
+            if (profile) {
+                document.getElementById('sidebarName').textContent = profile.full_name || "Користувач";
+                document.getElementById('sidebarNick').textContent = profile.username ? `@${profile.username}` : "@...";
+                document.getElementById('sidebarBio').textContent = profile.about || "Напишіть про себе...";
+                
+                const avatar = profile.avatar_url || '👨‍🍳';
+                selectAvatar(avatar);
+                
+                updateSocial('linkInsta', profile.instagram);
+                updateSocial('linkTiktok', profile.tiktok);
+                updateSocial('linkTelegram', profile.telegram);
+
+                document.getElementById('inputName').value = profile.full_name || "";
+                document.getElementById('inputNick').value = profile.username || "";
+                document.getElementById('inputBio').value = profile.about || "";
+                document.getElementById('inputInsta').value = profile.instagram || "";
+                document.getElementById('inputTiktok').value = profile.tiktok || "";
+                document.getElementById('inputTelegram').value = profile.telegram || "";
+                document.getElementById('inputAvatarUrl').value = avatar;
+                
+                initAvatarSelector(avatar);
+                updateLevel(profile.xp || 0);
+                
+                loadUserRecipes(user.id);
+                loadSavedRecipes(user.id); // Завантажуємо збережені!
+            }
+        }
+
+        function updateSocial(id, url) {
+            const el = document.getElementById(id);
+            if (url && url.length > 5) { el.href = url; el.classList.remove('hidden'); } 
+            else { el.classList.add('hidden'); }
+        }
+
+        // 3. ЗАВАНТАЖЕННЯ ФОТО
+        async function uploadCustomAvatar(input) {
+            const file = input.files[0];
+            if (!file) return;
+            document.body.style.cursor = 'wait';
+
+            const { data: { user } } = await supabase.auth.getUser();
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+
+            const { error } = await supabase.storage.from('AVATARS').upload(fileName, file);
+
+            if (!error) {
+                const { data } = supabase.storage.from('AVATARS').getPublicUrl(fileName);
+                selectAvatar(data.publicUrl);
+                document.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
+                document.querySelector('.upload-btn-grid').classList.add('selected');
+            } else {
+                alert("Помилка: " + error.message);
+            }
+            document.body.style.cursor = 'default';
+        }
+
+        // 4. ЗБЕРЕЖЕННЯ ПРОФІЛЮ
+        async function saveProfile(e) {
+            e.preventDefault();
+            const { data: { user } } = await supabase.auth.getUser();
+
+            const updates = {
+                id: user.id,
+                full_name: document.getElementById('inputName').value,
+                username: document.getElementById('inputNick').value || null,
+                about: document.getElementById('inputBio').value || null,
+                instagram: document.getElementById('inputInsta').value || null,
+                tiktok: document.getElementById('inputTiktok').value || null,
+                telegram: document.getElementById('inputTelegram').value || null,
+                avatar_url: document.getElementById('inputAvatarUrl').value,
+                updated_at: new Date()
+            };
+
+            const { error } = await supabase.from('profiles').upsert(updates);
+            if (!error) {
+                alert("Збережено! 🎉");
+                loadProfile();
+            } else {
+                alert(error.message);
+            }
+        }
+
+        // 5. СПИСКИ РЕЦЕПТІВ
+        async function loadUserRecipes(uid) {
+            const { data: recipes } = await supabase.from('recipes').select('*').eq('author_id', uid).order('created_at', {ascending: false});
+            const container = document.getElementById('myRecipesGrid');
+            renderRecipeList(recipes, container, true);
+        }
+
+        async function loadSavedRecipes(uid) {
+            // Тут ми робимо складний запит: беремо saved_recipes і "підтягуємо" дані з recipes
+            const { data: saved } = await supabase
+                .from('saved_recipes')
+                .select('recipe_id, recipes(*)')
+                .eq('user_id', uid);
+            
+            const container = document.getElementById('savedRecipesGrid');
+            if (saved && saved.length > 0) {
+                // Витягуємо саме рецепти з вкладеного об'єкта
+                const recipes = saved.map(item => item.recipes);
+                renderRecipeList(recipes, container, false);
+            } else {
+                container.innerHTML = '<p style="color:#9ca3af;">Поки що пусто.</p>';
+            }
+        }
+
+        function renderRecipeList(recipes, container, isEditable) {
+            container.innerHTML = '';
+            if(!recipes || !recipes.length) { container.innerHTML = '<p style="color:#9ca3af;">Поки що пусто.</p>'; return; }
+            recipes.forEach(r => {
+                let img = '';
+                let icon = '🍲';
+                if (r.image_url) {
+                    if (Array.isArray(r.image_url) && r.image_url.length > 0) img = `url('${r.image_url[0]}')`;
+                    else if (typeof r.image_url === 'string') img = `url('${r.image_url}')`;
+                }
+                if (img) icon = '';
+
+                let actionBtn = isEditable 
+                    ? `<a href="add-recipe.html?id=${r.id}" class="rm-btn">✏️ Редагувати</a>`
+                    : `<a href="index.html" class="rm-btn">👀 Переглянути</a>`; // Для збережених
+
+                container.innerHTML += `
+                    <div class="recipe-mini">
+                        <div class="rm-img" style="background-image:${img}; display:flex; align-items:center; justify-content:center;">${icon}</div>
+                        <div class="rm-body">
+                            <div class="rm-title">${r.title}</div>
+                            <div style="font-size:0.8rem; color:#666;">⏱ ${r.time_minutes} хв</div>
+                            ${actionBtn}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // 6. РІВЕНЬ
+        function updateLevel(xp) {
+            const LEVELS = [{min:0,n:"Новачок"},{min:500,n:"Любитель"},{min:1500,n:"Су-шеф"},{min:3000,n:"Шеф"},{min:5000,n:"Легенда"}];
+            let levelIndex=0, nextXP=500;
+            for(let i=0; i<LEVELS.length; i++) { if(xp>=LEVELS[i].min) { levelIndex=i; nextXP=LEVELS[i+1]?.min||xp*1.5; }}
+            document.getElementById('levelName').textContent = LEVELS[levelIndex].n;
+            document.getElementById('levelXP').textContent = `${xp} / ${nextXP} XP`;
+            document.getElementById('levelFill').style.width = Math.min(100, (xp/nextXP)*100) + "%";
+            document.getElementById('xpText').textContent = `Ще ${nextXP - xp} XP до нового рівня!`;
+        }
+
+        function openTab(tabId, btn) {
+            document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        async function logout() { await supabase.auth.signOut(); window.location.href = "index.html"; }
+    </script>
+</body>
+</html>
