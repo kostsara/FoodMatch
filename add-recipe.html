@@ -129,15 +129,12 @@
             padding: 0 20px;
         }
 
-        /* "Новий рецепт" у стилі лейбла, але більший і чорний */
         .page-title {
             font-size: 1rem;
-            /* більший за section-label (0.8rem) */
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.16em;
             color: #111827;
-            /* чорний текст */
             text-align: center;
             margin-bottom: 24px;
         }
@@ -155,7 +152,6 @@
             margin-bottom: 22px;
         }
 
-        /* Підзаголовки в стилі "ФОТО" */
         .section-label {
             font-size: 0.8rem;
             font-weight: 700;
@@ -163,6 +159,13 @@
             color: #6b7280;
             margin-bottom: 8px;
             letter-spacing: 0.08em;
+        }
+
+        .section-subtitle {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #4b5563;
+            margin-bottom: 6px;
         }
 
         input,
@@ -182,13 +185,11 @@
             resize: vertical;
         }
 
-        /* Ховаємо стандартні спінери для number */
         input[type="number"]::-webkit-outer-spin-button,
         input[type="number"]::-webkit-inner-spin-button {
             -webkit-appearance: none;
             margin: 0;
         }
-
 
         /* СТАРИЙ селект прихований (для форми і JS) */
         #rCategory {
@@ -287,7 +288,6 @@
             color: #7c0303;
         }
 
-        /* GRID ФОТО */
         .photo-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
@@ -332,7 +332,6 @@
             background: #ef4444;
         }
 
-        /* ІНГРЕДІЄНТИ / КРОКИ */
         .row-item {
             display: grid;
             grid-template-columns: 1.2fr 0.8fr 40px;
@@ -390,7 +389,6 @@
             background: #fdf2f2;
         }
 
-        /* ДВОКОЛОНОЧНИЙ БЛОК (категорія/час) */
         .two-cols {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -398,7 +396,6 @@
             margin-bottom: 8px;
         }
 
-        /* КРАСИВА КОНТРОЛЬ ЧАСУ З -/+ КНОПКАМИ */
         .time-control {
             display: flex;
             align-items: center;
@@ -431,7 +428,65 @@
             background: #fdf2f2;
         }
 
-        /* ACTIONS */
+        .features-block {
+            padding-top: 10px;
+            border-top: 1px dashed #e5e7eb;
+        }
+
+        .features-row {
+            margin-bottom: 12px;
+        }
+
+        .pill-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .pill {
+            cursor: pointer;
+        }
+
+        .pill span {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 999px;
+            border: 1px solid #e5e7eb;
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            background: #f9fafb;
+            color: #4b5563;
+            transition: 0.15s;
+        }
+
+        .pill input {
+            display: none;
+        }
+
+        .pill input:checked+span {
+            border-color: #A10404;
+            background: #fdf2f2;
+            color: #A10404;
+        }
+
+        .kbzh-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .kbzh-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .kbzh-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #6b7280;
+        }
+
         .actions {
             display: flex;
             justify-content: flex-end;
@@ -476,7 +531,6 @@
             box-shadow: none;
         }
 
-        /* АДАПТИВ */
         @media (max-width: 900px) {
             .nav-links-center {
                 display: none;
@@ -498,6 +552,10 @@
 
             .two-cols {
                 grid-template-columns: 1fr;
+            }
+
+            .kbzh-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
         }
     </style>
@@ -550,7 +608,6 @@
                 <div class="form-group" style="margin-bottom:0;">
                     <div class="section-label">Категорія</div>
 
-                    <!-- Кастомний селект -->
                     <div class="select-wrapper" id="categorySelect">
                         <button type="button" class="select-display">
                             <span id="categoryLabel">Сніданок</span>
@@ -572,7 +629,6 @@
                         </div>
                     </div>
 
-                    <!-- Прихований нативний селект для форми/JS -->
                     <select id="rCategory">
                         <option value="breakfast" selected>Сніданок</option>
                         <option value="lunch">Обід</option>
@@ -591,6 +647,87 @@
                 </div>
             </div>
 
+            <!-- ОСОБЛИВОСТІ РЕЦЕПТА -->
+            <div class="form-group">
+                <div class="section-label">Особливості страви</div>
+                <div class="features-block">
+                    <div class="features-row">
+                        <div class="section-subtitle">Гострота</div>
+                        <div class="pill-group">
+                            <label class="pill">
+                                <input type="radio" name="spice" value="none" checked>
+                                <span>Не гостре</span>
+                            </label>
+                            <label class="pill">
+                                <input type="radio" name="spice" value="medium">
+                                <span>Середньо гостре</span>
+                            </label>
+                            <label class="pill">
+                                <input type="radio" name="spice" value="hot">
+                                <span>Гостре</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="features-row">
+                        <div class="section-subtitle">Особливості</div>
+                        <div class="pill-group">
+                            <label class="pill">
+                                <input type="checkbox" id="fVegan">
+                                <span>Веганське</span>
+                            </label>
+                            <label class="pill">
+                                <input type="checkbox" id="fVegetarian">
+                                <span>Вегетаріанське</span>
+                            </label>
+                            <label class="pill">
+                                <input type="checkbox" id="fLactoseFree">
+                                <span>Без лактози</span>
+                            </label>
+                            <label class="pill">
+                                <input type="checkbox" id="fGlutenFree">
+                                <span>Без глютену</span>
+                            </label>
+                            <label class="pill">
+                                <input type="checkbox" id="fPescetarian">
+                                <span>Пескетаріанське</span>
+                            </label>
+                            <label class="pill">
+                                <input type="checkbox" id="fNutFree">
+                                <span>Без горіхів</span>
+                            </label>
+                            <label class="pill">
+                                <input type="checkbox" id="fCitrusFree">
+                                <span>Без цитрусових</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- КАЛОРІЇ + КБЖ -->
+            <div class="form-group">
+                <div class="section-label">Калорії та КБЖ (на порцію)</div>
+                <div class="kbzh-grid">
+                    <div class="kbzh-item">
+                        <label class="kbzh-label" for="rCalories">Ккал</label>
+                        <input type="number" id="rCalories" min="0" placeholder="320">
+                    </div>
+                    <div class="kbzh-item">
+                        <label class="kbzh-label" for="rProtein">Білки, г</label>
+                        <input type="number" id="rProtein" min="0" step="0.1" placeholder="18">
+                    </div>
+                    <div class="kbzh-item">
+                        <label class="kbzh-label" for="rFat">Жири, г</label>
+                        <input type="number" id="rFat" min="0" step="0.1" placeholder="24">
+                    </div>
+                    <div class="kbzh-item">
+                        <label class="kbzh-label" for="rCarbs">Вугл., г</label>
+                        <input type="number" id="rCarbs" min="0" step="0.1" placeholder="2">
+                    </div>
+                </div>
+            </div>
+
             <div class="form-group">
                 <div class="section-label">Інгредієнти</div>
                 <div id="ingredientsList">
@@ -600,8 +737,8 @@
                         <button type="button" class="btn-remove" onclick="this.parentElement.remove()">×</button>
                     </div>
                 </div>
-                <button type="button" class="btn-add" onclick="addIngredient()">+ Додати ще інгредієнт</button>
             </div>
+            <button type="button" class="btn-add" onclick="addIngredient()">+ Додати ще інгредієнт</button>
 
             <div class="form-group">
                 <div class="section-label">Як готувати</div>
@@ -613,8 +750,8 @@
                             onclick="this.parentElement.remove(); renumberSteps();">×</button>
                     </div>
                 </div>
-                <button type="button" class="btn-add" onclick="addStep()">+ Додати наступний крок</button>
             </div>
+            <button type="button" class="btn-add" onclick="addStep()">+ Додати наступний крок</button>
 
             <div class="actions">
                 <a href="index.html" class="btn-cancel">Скасувати</a>
@@ -632,7 +769,6 @@
         let existingPhotos = [];
         let newFiles = [];
 
-        // 0. Ініціалізація кастомного селекту категорії
         function initCategoryDropdown() {
             const wrapper = document.getElementById('categorySelect');
             if (!wrapper) return;
@@ -658,7 +794,6 @@
                 });
             }
 
-            // Початкове значення
             setCategory(hiddenSelect.value || 'breakfast');
 
             displayBtn.onclick = (e) => {
@@ -681,11 +816,9 @@
                 }
             });
 
-            // Робимо функцію доступною для редагування
             window.setCategoryFromOutside = setCategory;
         }
 
-        // Кнопки +/- для часу
         function changeTime(delta) {
             const input = document.getElementById('rTime');
             let value = parseInt(input.value, 10);
@@ -695,7 +828,6 @@
             input.value = value || '';
         }
 
-        // 1. ІНІЦІАЛІЗАЦІЯ ПРИ СТАРТІ
         document.addEventListener('DOMContentLoaded', async () => {
             initCategoryDropdown();
 
@@ -719,7 +851,6 @@
             }
         });
 
-        // 2. ЗАВАНТАЖЕННЯ ДАНИХ РЕЦЕПТА
         async function loadRecipeForEdit(id) {
             document.getElementById('pageTitle').textContent = "Редагувати рецепт";
             document.getElementById('submitBtn').textContent = "Зберегти зміни";
@@ -741,8 +872,44 @@
                 window.setCategoryFromOutside(recipe.category);
             }
             document.getElementById('rTime').value = recipe.time_minutes;
+
             if (document.getElementById('rCalories')) {
                 document.getElementById('rCalories').value = recipe.calories || '';
+            }
+            if (document.getElementById('rProtein')) {
+                document.getElementById('rProtein').value = recipe.protein || '';
+            }
+            if (document.getElementById('rFat')) {
+                document.getElementById('rFat').value = recipe.fat || '';
+            }
+            if (document.getElementById('rCarbs')) {
+                document.getElementById('rCarbs').value = recipe.carbs || '';
+            }
+
+            const spice = recipe.spiciness || 'none';
+            const spiceInput = document.querySelector(`input[name="spice"][value="${spice}"]`);
+            if (spiceInput) spiceInput.checked = true;
+
+            if (document.getElementById('fVegan')) {
+                document.getElementById('fVegan').checked = !!recipe.is_vegan;
+            }
+            if (document.getElementById('fVegetarian')) {
+                document.getElementById('fVegetarian').checked = !!recipe.is_vegetarian;
+            }
+            if (document.getElementById('fLactoseFree')) {
+                document.getElementById('fLactoseFree').checked = !!recipe.lactose_free;
+            }
+            if (document.getElementById('fGlutenFree')) {
+                document.getElementById('fGlutenFree').checked = !!recipe.is_gluten_free;
+            }
+            if (document.getElementById('fPescetarian')) {
+                document.getElementById('fPescetarian').checked = !!recipe.pescetarian;
+            }
+            if (document.getElementById('fNutFree')) {
+                document.getElementById('fNutFree').checked = !!recipe.nut_free;
+            }
+            if (document.getElementById('fCitrusFree')) {
+                document.getElementById('fCitrusFree').checked = !!recipe.citrus_free;
             }
 
             if (recipe.image_url && Array.isArray(recipe.image_url)) {
@@ -767,7 +934,6 @@
             }
         }
 
-        // 3. ФОТО
         function handleFileSelect(input) {
             const files = Array.from(input.files);
             newFiles = [...newFiles, ...files];
@@ -808,7 +974,6 @@
             return div;
         }
 
-        // 4. ДИНАМІЧНІ ПОЛЯ
         function addIngredient(nameVal = '', amountVal = '') {
             const div = document.createElement('div');
             div.className = 'row-item';
@@ -838,7 +1003,6 @@
             items.forEach((el, idx) => el.textContent = idx + 1);
         }
 
-        // 5. ЗБЕРЕЖЕННЯ
         async function publishRecipe(e) {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
@@ -875,13 +1039,30 @@
                     if (el.value) steps.push(el.value);
                 });
 
+                const spiceInput = document.querySelector('input[name="spice"]:checked');
+                const spiceVal = spiceInput ? spiceInput.value : 'none';
+
                 const recipeData = {
                     author_id: currentUser.id,
                     title: document.getElementById('rTitle').value,
                     image_url: finalImages,
                     category: document.getElementById('rCategory').value,
                     time_minutes: parseInt(document.getElementById('rTime').value) || 0,
-                    calories: document.getElementById('rCalories') ? parseInt(document.getElementById('rCalories').value) : 0,
+
+                    calories: parseInt(document.getElementById('rCalories').value) || 0,
+                    protein: parseFloat(document.getElementById('rProtein').value) || 0,
+                    fat: parseFloat(document.getElementById('rFat').value) || 0,
+                    carbs: parseFloat(document.getElementById('rCarbs').value) || 0,
+
+                    spiciness: spiceVal, // 'none' | 'medium' | 'hot'
+                    is_vegan: document.getElementById('fVegan').checked,
+                    is_vegetarian: document.getElementById('fVegetarian').checked,
+                    lactose_free: document.getElementById('fLactoseFree').checked,
+                    is_gluten_free: document.getElementById('fGlutenFree').checked,
+                    pescetarian: document.getElementById('fPescetarian').checked,
+                    nut_free: document.getElementById('fNutFree').checked,
+                    citrus_free: document.getElementById('fCitrusFree').checked,
+
                     ingredients: ingredients,
                     steps: steps
                 };
