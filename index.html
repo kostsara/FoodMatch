@@ -216,6 +216,50 @@
             margin-bottom: 8px;
         }
 
+        /* Список типів страв — вертикально */
+.meal-type-list {
+    display: flex;
+    flex-direction: column;  /* зверху вниз */
+    gap: 6px;
+}
+
+/* Кнопка-рядок: тільки текст + іконка */
+.meal-type-btn {
+    border: none;
+    background: transparent;
+    padding: 4px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-align: left;
+    cursor: pointer;
+
+    font-size: 0.9rem;        /* менший за заголовок */
+    font-weight: 600;
+    color: #111827;
+}
+
+/* Іконка зліва */
+.meal-type-icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+/* Ховер */
+.meal-type-btn:hover span {
+    color: #A10404;
+}
+
+/* Активний пункт — червоний текст (як у меню зверху) */
+.meal-type-btn.active span {
+    color: #A10404;
+}
+
+
+        
         .filter-block {
             margin-bottom: 18px;
         }
@@ -830,7 +874,7 @@
                     <a href="shopping-list.html">СПИСОК ПОКУПОК</a>
                 </div>
                 <div class="nav-actions">
-                    <a href="profile.html" class="nav-btn">Кабінет</a>
+                    <a href="profile.html" class="nav-btn">профіль</a>
                 </div>
             </nav>
         </header>
@@ -848,27 +892,63 @@
                 <aside class="sidebar">
                     <div class="section-label">Швидкий доступ</div>
                     <div class="pill-row" style="flex-direction: column;">
-                        <a href="add-recipe.html" class="pill-btn menu-btn">➕ Додати свій рецепт</a>
-                        <a href="shopping-list.html" class="pill-btn menu-btn">📌 Мій список покупок</a>
+                        <a href="add-recipe.html" class="pill-btn menu-btn">Додати свій рецепт</a>
+                        <a href="shopping-list.html" class="pill-btn menu-btn">Мій список покупок</a>
                     </div>
 
                     <div class="divider"></div>
 
-                    <div class="section-label">Тип страви</div>
-                    <div class="pill-row" id="mealTypeRow">
-                        <button class="pill-btn active" data-type="all">Усі</button>
-                        <button class="pill-btn" data-type="breakfast">Сніданок</button>
-                        <button class="pill-btn" data-type="lunch">Обід</button>
-                        <button class="pill-btn" data-type="dinner">Вечеря</button>
-                        <button class="pill-btn" data-type="dessert">Десерт</button>
-                    </div>
+                <div class="meal-type-list" id="mealTypeRow">
+                    <button class="meal-type-btn active" data-type="all">
+                        <span class="meal-type-icon-wrap">
+                            <img src="img/all.jpg" alt="" class="meal-type-icon">
+                        </span>
+                        <span>Усі</span>
+                    </button>
+                
+                    <button class="meal-type-btn" data-type="breakfast">
+                        <span class="meal-type-icon-wrap">
+                            <img src="img/breakfast.jpg" alt="" class="meal-type-icon">
+                        </span>
+                        <span>Сніданок</span>
+                    </button>
+                
+                    <button class="meal-type-btn" data-type="lunch">
+                        <span class="meal-type-icon-wrap">
+                            <img src="img/lunch.jpg" alt="" class="meal-type-icon">
+                        </span>
+                        <span>Обід</span>
+                    </button>
+                
+                    <button class="meal-type-btn" data-type="dinner">
+                        <span class="meal-type-icon-wrap">
+                            <img src="img/dinner.jpg" alt="" class="meal-type-icon">
+                        </span>
+                        <span>Вечеря</span>
+                    </button>
+                
+                    <button class="meal-type-btn" data-type="dessert">
+                        <span class="meal-type-icon-wrap">
+                            <img src="img/dessert.jpg" alt="" class="meal-type-icon">
+                        </span>
+                        <span>Десерт</span>
+                    </button>
+                </div>
+
+
 
                     <div class="divider"></div>
 
-                    <div class="section-label">Особливості</div>
-                    <div class="pill-row" id="featuresRow">
-                        <button class="pill-btn" data-vegan="vegan">Веганське</button>
-                    </div>
+                <div class="section-label">Особливості</div>
+                <div class="pill-row" id="featuresRow">
+                    <button class="pill-btn" data-feature="vegan">Веганське</button>
+                    <button class="pill-btn" data-feature="vegetarian">Вегетаріанське</button>
+                    <button class="pill-btn" data-feature="lactose_free">Без лактози</button>
+                    <button class="pill-btn" data-feature="gluten_free">Без глютену</button>
+                    <button class="pill-btn" data-feature="pescatarian">Пескетаріанське</button>
+                    <button class="pill-btn" data-feature="nut_free">Без горіхів</button>
+                    <button class="pill-btn" data-feature="citrus_free">Без цитрусових</button>
+                </div>
 
                     <div class="divider"></div>
 
@@ -881,19 +961,7 @@
 
                     <div class="divider"></div>
 
-                    <!-- АЛЕРГІЇ – ТАК САМО ЯК "ЩО Є В ХОЛОДИЛЬНИКУ?" -->
-                    <div class="filter-block">
-                        <div class="section-label">Алергії</div>
-                        <div class="ingredient-input-wrapper">
-                            <input type="text" id="allergyInput"
-                                placeholder="Введіть продукт (наприклад: горіхи, глютен)...">
-                            <div id="allergySuggestions" class="suggestions-box"></div>
-                        </div>
-                        <div id="allergyTags" class="selected-tags-container"></div>
-                        <div style="margin-bottom:15px; text-align:left;">
-                            <button onclick="clearAllergies()" class="reset-link">Скинути алергії</button>
-                        </div>
-                    </div>
+            
 
 
                     <div class="divider"></div>
@@ -1027,14 +1095,13 @@
         let currentRecipeId = null;
         let currentRating = 0;
 
-        let state = {
+       let state = {
             type: 'all',
             have: new Set(),
             maxMissing: 5,
             recipeSearch: '',
-            vegan: false,
-            spice: 'all',
-            allergies: new Set()
+            features: new Set(),   // тут зберігаємо вибрані особливості
+            spice: 'all'
         };
 
         document.addEventListener('DOMContentLoaded', async () => {
@@ -1105,18 +1172,7 @@
                 if (state.spice && state.spice !== 'all') {
                     if (!r.spiciness || r.spiciness !== state.spice) return false;
                 }
-
-                // 5. Алергії
-                if (state.allergies.size > 0 && r.ingredients) {
-                    for (let ing of r.ingredients) {
-                        const ingName = ing.name.toLowerCase();
-                        for (let a of state.allergies) {
-                            if (ingName.includes(a) || a.includes(ingName)) {
-                                return false;
-                            }
-                        }
-                    }
-                }
+            
 
                 // 6. Інгредієнти в холодильнику
                 if (!r.ingredients) return true;
