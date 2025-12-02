@@ -951,13 +951,14 @@
 
                     <div class="section-label">Особливості</div>
                     <div class="pill-row" id="featuresRow">
-                        <button class="pill-btn" data-feature="vegan">Веганське</button>
-                        <button class="pill-btn" data-feature="vegetarian">Вегетаріанське</button>
+                        <button class="pill-btn" data-feature="is_vegan">Веганське</button>
+                        <button class="pill-btn" data-feature="is_vegetarian">Вегетаріанське</button>
                         <button class="pill-btn" data-feature="lactose_free">Без лактози</button>
-                        <button class="pill-btn" data-feature="gluten_free">Без глютену</button>
-                        <button class="pill-btn" data-feature="pescatarian">Пескетаріанське</button>
+                        <button class="pill-btn" data-feature="is_gluten_free">Без глютену</button>
+                        <button class="pill-btn" data-feature="pescetarian">Пескетаріанське</button>
                         <button class="pill-btn" data-feature="nut_free">Без горіхів</button>
                         <button class="pill-btn" data-feature="citrus_free">Без цитрусових</button>
+
                     </div>
 
                     <div class="divider"></div>
@@ -1118,14 +1119,15 @@
 
         // Мапа особливостей → людські лейбли
         const featureLabels = {
-            vegan: 'Веганське',
-            vegetarian: 'Вегетаріанське',
-            lactose_free: 'Без лактози',
-            gluten_free: 'Без глютену',
-            pescatarian: 'Пескетаріанське',
-            nut_free: 'Без горіхів',
-            citrus_free: 'Без цитрусових'
-        };
+                is_vegan: 'Веганське',
+                is_vegetarian: 'Вегетаріанське',
+                lactose_free: 'Без лактози',
+                is_gluten_free: 'Без глютену',
+                pescetarian: 'Пескетаріанське',
+                nut_free: 'Без горіхів',
+                citrus_free: 'Без цитрусових'
+            };
+
 
         function spiceLabel(val) {
             if (val === 'none') return 'Не гостре';
@@ -1192,15 +1194,8 @@
         }
 
         // Перевірка, чи рецепт має конкретну особливість
-        function recipeHasFeature(r, featureKey) {
-            if (Array.isArray(r.features)) {
-                if (r.features.includes(featureKey)) return true;
-            }
-            const field = 'is_' + featureKey;
-            if (r.hasOwnProperty(field)) {
-                return Boolean(r[field]);
-            }
-            return false;
+       function recipeHasFeature(r, featureKey) {
+            return Boolean(r[featureKey]);
         }
 
         // Отримати всі особливості рецепта
@@ -1221,12 +1216,13 @@
                 // 2. Тип страви
                 if (state.type !== 'all' && r.category !== state.type) return false;
 
-                // 3. Особливості – всі обрані мають бути в рецепті
+                // 3. Особливості (перевіряємо, що всі вибрані особливості є true у рецепті)
                 if (state.features.size > 0) {
-                    const needFeatures = Array.from(state.features);
-                    const hasAll = needFeatures.every(f => recipeHasFeature(r, f));
-                    if (!hasAll) return false;
+                    for (let key of state.features) {
+                        if (!r[key]) return false;
+                    }
                 }
+
 
                 // 4. Гострота (підв'язка по spiciness)
                 if (state.spice !== 'all') {
