@@ -682,7 +682,7 @@
                 <div class="level-box">
                     <div class="level-header">
                         <span id="levelName">Новачок</span>
-                        <span id="levelXP">0 XP</span>
+                        <span id="levelXP">0 / 1000 XP</span>
                     </div>
                     <div class="progress-bar">
                         <div class="progress-fill" id="levelFill"></div>
@@ -803,6 +803,16 @@
         const EMOJI_AVATARS = ['👨‍🍳', '👩‍🍳', '🍔', '🍕', '🥗', '🥑', '🥦', '🍓', '🍩', '🥐', '☕', '🍱'];
         let currentUserId = null;
 
+        // 🔥 Константи системи рівнів
+        const LEVEL_RANGE = 1000; // 0–1000 XP на рівень
+        const LEVEL_NAMES = [
+            "Новачок",   // рівень 0
+            "Любитель",  // рівень 1
+            "Су-шеф",    // рівень 2
+            "Шеф",       // рівень 3
+            "Легенда"    // рівень 4+
+        ];
+
         document.addEventListener('DOMContentLoaded', loadProfile);
 
         function initAvatarSelector(currentUrl) {
@@ -867,6 +877,8 @@
                 document.getElementById('inputAvatarUrl').value = avatar;
 
                 initAvatarSelector(avatar);
+
+                // ⚙️ оновлюємо рівень із total XP з бази
                 updateLevel(profile.xp || 0);
 
                 loadUserRecipes(user.id);
@@ -1051,25 +1063,82 @@
         }
 
         // 6. РІВЕНЬ
-        function updateLevel(xp) {
-            const LEVELS = [
-                { min: 0, n: "Новачок" },
-                { min: 500, n: "Любитель" },
-                { min: 1500, n: "Су-шеф" },
-                { min: 3000, n: "Шеф" },
-                { min: 5000, n: "Легенда" }
-            ];
-            let levelIndex = 0, nextXP = 500;
-            for (let i = 0; i < LEVELS.length; i++) {
-                if (xp >= LEVELS[i].min) {
-                    levelIndex = i;
-                    nextXP = LEVELS[i + 1]?.min || xp * 1.5;
-                }
+
+        // допоміжна: по total XP рахуємо індекс рівня
+        function getLevelIndex(totalXp) {
+            let idx = Math.floor(totalXp / LEVEL_RANGE);
+            if (idx < 0) idx = 0;
+            if (idx >= LEVEL_NAMES.length) idx = LEVEL_NAMES.length - 1;
+            return idx;
+        }
+
+        // оновлення UI рівня по total XP з бази
+        function updateLevel(totalXp) {
+            const levelIndex = getLevelIndex(totalXp);
+            const levelName = LEVEL_NAMES[levelIndex];
+
+            const xpInLevel = totalXp % LEVEL_RANGE;      // 0–999
+            const xpToNext = LEVEL_RANGE - xpInLevel;     // скільки лишилось до наступного
+            const percent = (xpInLevel / LEVEL_RANGE) * 100;
+
+            document.getElementById('levelName').textContent = levelName;
+            document.getElementById('levelXP').textContent = `${xpInLevel} / ${LEVEL_RANGE} XP`;
+            document.getElementById('levelFill').style.width = `${Math.min(100, percent)}%`;
+
+            const xpTextEl = document.getElementById('xpText');
+            if (levelIndex === LEVEL_NAMES.length - 1) {
+                xpTextEl.textContent = `Максимальний рівень! Продовжуйте набирати XP 😎`;
+            } else {
+                xpTextEl.textContent = `Ще ${xpToNext} XP до нового рівня.`;
             }
-            document.getElementById('levelName').textContent = LEVELS[levelIndex].n;
-            document.getElementById('levelXP').textContent = `${xp} / ${nextXP} XP`;
-            document.getElementById('levelFill').style.width = Math.min(100, (xp / nextXP) * 100) + "%";
-            document.getElementById('xpText').textContent = `Ще ${nextXP - xp} XP до нового рівня.`;
+        }
+
+        // 🔥 ПРИРОСТ XP + перевірка підвищення рівня
+        // Викликаєш addXp(кількість) там, де треба (напр. після додавання рецепта)
+        async function addXp(amount) {
+            if (!currentUserId || amount <= 0) return;
+
+            // 1. Отримуємо поточний XP юзера
+            const { data: profile, error } = await supabase
+                .from('profiles')
+                .select('xp')
+                .eq('id', currentUserId)
+                .single();
+
+            if (error) {
+                console.error('XP load error', error);
+                return;
+            }
+
+            const oldXp = profile?.xp || 0;
+            const oldLevelIndex = getLevelIndex(oldXp);
+
+            // 2. Рахуємо новий XP
+            const newXp = oldXp + amount;
+            const newLevelIndex = getLevelIndex(newXp);
+
+            // 3. Зберігаємо в базу
+            const { error: updateError } = await supabase
+                .from('profiles')
+                .update({
+                    xp: newXp,
+                    updated_at: new Date()
+                })
+                .eq('id', currentUserId);
+
+            if (updateError) {
+                console.error('XP update error', updateError);
+                return;
+            }
+
+            // 4. Оновлюємо UI
+            updateLevel(newXp);
+
+            // 5. Якщо рівень виріс — показуємо повідомлення
+            if (newLevelIndex > oldLevelIndex) {
+                const newLevelName = LEVEL_NAMES[newLevelIndex];
+                alert(`Вітаємо! Ви досягли рівня "${newLevelName}" 🎉`);
+            }
         }
 
         function openTab(tabId, btn) {
