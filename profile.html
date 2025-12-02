@@ -525,6 +525,7 @@
             overflow: hidden;
             cursor: pointer;
             transition: 0.2s;
+            position: relative;
         }
 
         .recipe-mini:hover {
@@ -559,21 +560,69 @@
             color: #6b7280;
         }
 
+        .rm-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
         .rm-btn {
-            display: block;
-            width: 100%;
+            flex: 1;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
             padding: 8px;
             text-align: center;
             background: #F3F4F6;
             border-radius: 8px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 600;
-            margin-top: 10px;
             color: #374151;
+            border: none;
         }
 
         .rm-btn:hover {
             background: #E5E7EB;
+        }
+
+        .rm-btn-delete {
+            background: #FEF2F2;
+            color: #B91C1C;
+        }
+
+        .rm-btn-delete:hover {
+            background: #FEE2E2;
+        }
+
+        /* сердечко на збережених */
+        .mini-heart-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #E5E7EB;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #D1D5DB;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+            z-index: 5;
+        }
+
+        .mini-heart-btn:hover {
+            transform: scale(1.05);
+            background: #ffffff;
+        }
+
+        .mini-heart-btn.saved {
+            color: var(--primary);
+            border-color: var(--primary);
+            background: #FEF2F2;
         }
 
         @keyframes fadeIn {
@@ -752,11 +801,15 @@
     <script>
         // 1. ІНІЦІАЛІЗАЦІЯ
         const EMOJI_AVATARS = ['👨‍🍳', '👩‍🍳', '🍔', '🍕', '🥗', '🥑', '🥦', '🍓', '🍩', '🥐', '☕', '🍱'];
+        let currentUserId = null;
+
         document.addEventListener('DOMContentLoaded', loadProfile);
 
         function initAvatarSelector(currentUrl) {
             const container = document.getElementById('avatarSelector');
-            while (container.children.length > 1) { container.removeChild(container.lastChild); }
+            while (container.children.length > 1) {
+                container.removeChild(container.lastChild);
+            }
             EMOJI_AVATARS.forEach(emoji => {
                 const div = document.createElement('div');
                 div.className = 'avatar-option';
@@ -785,7 +838,11 @@
         // 2. ЗАВАНТАЖЕННЯ ДАНИХ
         async function loadProfile() {
             const { data: { user } } = await supabase.auth.getUser();
-            if (!user) { window.location.href = "login.html"; return; }
+            if (!user) {
+                window.location.href = "login.html";
+                return;
+            }
+            currentUserId = user.id;
 
             const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
 
@@ -819,8 +876,12 @@
 
         function updateSocial(id, url) {
             const el = document.getElementById(id);
-            if (url && url.length > 5) { el.href = url; el.classList.remove('hidden'); }
-            else { el.classList.add('hidden'); }
+            if (url && url.length > 5) {
+                el.href = url;
+                el.classList.remove('hidden');
+            } else {
+                el.classList.add('hidden');
+            }
         }
 
         // 3. ЗАВАНТАЖЕННЯ ФОТО
@@ -874,9 +935,14 @@
 
         // 5. СПИСКИ РЕЦЕПТІВ
         async function loadUserRecipes(uid) {
-            const { data: recipes } = await supabase.from('recipes').select('*').eq('author_id', uid).order('created_at', { ascending: false });
+            const { data: recipes } = await supabase
+                .from('recipes')
+                .select('*')
+                .eq('author_id', uid)
+                .order('created_at', { ascending: false });
+
             const container = document.getElementById('myRecipesGrid');
-            renderRecipeList(recipes, container, true);
+            renderRecipeList(recipes, container, true, false);
         }
 
         async function loadSavedRecipes(uid) {
@@ -888,13 +954,15 @@
             const container = document.getElementById('savedRecipesGrid');
             if (saved && saved.length > 0) {
                 const recipes = saved.map(item => item.recipes);
-                renderRecipeList(recipes, container, false);
+                renderRecipeList(recipes, container, false, true);
             } else {
                 container.innerHTML = '<p style="color:#9ca3af;">Поки що пусто.</p>';
             }
         }
 
-        function renderRecipeList(recipes, container, isEditable) {
+        // isEditable = "мої рецепти" (редагувати + видалити)
+        // isSavedList = "збережені" (сердечко зверху)
+        function renderRecipeList(recipes, container, isEditable, isSavedList = false) {
             container.innerHTML = '';
             if (!recipes || !recipes.length) {
                 container.innerHTML = '<p style="color:#9ca3af;">Поки що пусто.</p>';
@@ -908,23 +976,78 @@
                     else if (typeof r.image_url === 'string') img = `url('${r.image_url}')`;
                 }
 
-                let actionBtn = isEditable
-                    ? `<a href="add-recipe.html?id=${r.id}" class="rm-btn">Редагувати</a>`
-                    : `<a href="index.html" class="rm-btn">Переглянути</a>`;
+                let actionsHtml = '';
+                if (isEditable) {
+                    actionsHtml = `
+                    <div class="rm-actions">
+                        <a href="add-recipe.html?id=${r.id}" class="rm-btn">Редагувати</a>
+                        <button type="button" class="rm-btn rm-btn-delete" onclick="deleteRecipe('${r.id}')">
+                            Видалити
+                        </button>
+                    </div>
+                `;
+                } else if (isSavedList) {
+                    actionsHtml = `
+                    <div class="rm-actions">
+                        <a href="index.html" class="rm-btn">Переглянути</a>
+                    </div>
+                `;
+                }
+
+                const heartHtml = isSavedList
+                    ? `<button class="mini-heart-btn saved" onclick="toggleSavedProfile('${r.id}', this)">♥</button>`
+                    : '';
 
                 container.innerHTML += `
                 <div class="recipe-mini">
+                    ${heartHtml}
                     <div class="rm-img" style="${img ? `background-image:${img}; color:transparent;` : ''}">
                         ${img ? '' : placeholderText}
                     </div>
                     <div class="rm-body">
                         <div class="rm-title">${r.title}</div>
                         <div class="rm-meta">⏱ ${r.time_minutes} хв</div>
-                        ${actionBtn}
+                        ${actionsHtml}
                     </div>
                 </div>
             `;
             });
+        }
+
+        // видалення власного рецепта
+        async function deleteRecipe(id) {
+            if (!confirm('Видалити рецепт назавжди?')) return;
+            const { error } = await supabase.from('recipes').delete().eq('id', id);
+            if (error) {
+                alert('Не вдалося видалити рецепт: ' + error.message);
+                return;
+            }
+            if (currentUserId) {
+                loadUserRecipes(currentUserId);
+            }
+        }
+
+        // відкріпити рецепт із "Збережених" по кліку на сердечко
+        async function toggleSavedProfile(recipeId, btn) {
+            if (!currentUserId) return;
+            const { error } = await supabase
+                .from('saved_recipes')
+                .delete()
+                .match({ user_id: currentUserId, recipe_id: recipeId });
+
+            if (error) {
+                alert('Не вдалося оновити збережене: ' + error.message);
+                return;
+            }
+
+            // прибираємо картку в UI
+            const card = btn.closest('.recipe-mini');
+            if (card) card.remove();
+
+            const container = document.getElementById('savedRecipesGrid');
+            if (container && container.children.length === 0) {
+                container.innerHTML = '<p style="color:#9ca3af;">Поки що пусто.</p>';
+            }
         }
 
         // 6. РІВЕНЬ
