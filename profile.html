@@ -772,9 +772,11 @@
 
             <div id="my-recipes" class="content-section">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
-                    <h1 class="section-title-main" style="margin-bottom:0;">Мої рецепти</h1>
-                    <a href="add-recipe.html" class="btn-main" style="padding:10px 22px; font-size:0.8rem;">Створити
-                        рецепт</a>
+                    <h1 id="myRecipesTitle" class="section-title-main" style="margin-bottom:0;">Мої рецепти</h1>
+                    <a id="btnCreateRecipe" href="add-recipe.html" class="btn-main" style="padding:10px 22px; font-size:0.8rem;">
+                        Створити рецепт
+                    </a>
+         
                 </div>
                 <div class="settings-box" style="padding:20px;">
                     <div class="recipes-list" id="myRecipesGrid">
@@ -804,6 +806,7 @@
         let currentUserId = null;
         let viewedUserId = null;   // чий профіль показуємо
         let isOwnProfile = true;   // чи це наш профіль, чи чужий
+        
 
         // 🔥 Константи системи рівнів
         const LEVEL_RANGE = 1000; // 0–1000 XP на рівень
@@ -848,106 +851,108 @@
         }
 
         // 2. ЗАВАНТАЖЕННЯ ДАНИХ
-       // 2. ЗАВАНТАЖЕННЯ ДАНИХ
-        async function loadProfile() {
-            // 1) Дістаємо id з URL, якщо прийшли з рецепта: profile.html?id=...
-            const params = new URLSearchParams(window.location.search);
-            const foreignId = params.get('id'); // id автора рецепта, якщо є
+            async function loadProfile() {
+                // 1) id з URL, якщо прийшли з рецепта: profile.html?id=...
+                const params = new URLSearchParams(window.location.search);
+                const foreignId = params.get('id');
 
-            // 2) Дістаємо поточного залогіненого юзера
-            const { data: { user } } = await supabase.auth.getUser();
-            if (!user) {
-                // без авторизації поки просто шлемо на логін
-                window.location.href = "login.html";
-                return;
-            }
+                // 2) поточний залогінений юзер
+                const { data: { user } } = await supabase.auth.getUser();
+                if (!user) {
+                    window.location.href = "login.html";
+                    return;
+                }
 
-            // id того, хто зараз залогінений
-            currentUserId = user.id;
+                currentUserId = user.id;
 
-            // 3) Визначаємо, чий профіль показувати
-            if (foreignId && foreignId !== user.id) {
-                // дивимось ЧУЖИЙ профіль
-                viewedUserId = foreignId;
-                isOwnProfile = false;
-            } else {
-                // дивимось СВІЙ профіль
-                viewedUserId = user.id;
-                isOwnProfile = true;
-            }
+                // 3) вирішуємо, свій чи чужий профіль
+                if (foreignId && foreignId !== user.id) {
+                    viewedUserId = foreignId;
+                    isOwnProfile = false;
+                } else {
+                    viewedUserId = user.id;
+                    isOwnProfile = true;
+                }
 
-            // 4) Тягнемо дані профілю того юзера, якого дивимось
-            const { data: profile } = await supabase
-                .from('profiles')
-                .select('*')
-                .eq('id', viewedUserId)
-                .single();
+                // 4) тягнемо профіль того, кого дивимось
+                const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', viewedUserId)
+                    .single();
 
-            if (!profile) {
-                document.getElementById('sidebarName').textContent = "Профіль не знайдено";
-                return;
-            }
+                if (!profile) {
+                    document.getElementById('sidebarName').textContent = "Профіль не знайдено";
+                    return;
+                }
 
-            // 5) Заповнюємо сайдбар
-            document.getElementById('sidebarName').textContent = profile.full_name || "Користувач";
-            document.getElementById('sidebarNick').textContent = profile.username ? `@${profile.username}` : "@...";
-            document.getElementById('sidebarBio').textContent = profile.about || "Напишіть про себе...";
+                // 5) сайдбар
+                document.getElementById('sidebarName').textContent = profile.full_name || "Користувач";
+                document.getElementById('sidebarNick').textContent = profile.username ? `@${profile.username}` : "@...";
+                document.getElementById('sidebarBio').textContent = profile.about || "Напишіть про себе...";
 
-            const avatar = profile.avatar_url || 'FM';
-            selectAvatar(avatar);
+                const avatar = profile.avatar_url || 'FM';
+                selectAvatar(avatar);
 
-            updateSocial('linkInsta', profile.instagram);
-            updateSocial('linkTiktok', profile.tiktok);
-            updateSocial('linkTelegram', profile.telegram);
+                updateSocial('linkInsta', profile.instagram);
+                updateSocial('linkTiktok', profile.tiktok);
+                updateSocial('linkTelegram', profile.telegram);
 
-            // 6) Якщо це наш профіль — заповнюємо форму для редагування
-            if (isOwnProfile) {
-                document.getElementById('inputName').value = profile.full_name || "";
-                document.getElementById('inputNick').value = profile.username || "";
-                document.getElementById('inputBio').value = profile.about || "";
-                document.getElementById('inputInsta').value = profile.instagram || "";
-                document.getElementById('inputTiktok').value = profile.tiktok || "";
-                document.getElementById('inputTelegram').value = profile.telegram || "";
-                document.getElementById('inputAvatarUrl').value = avatar;
+                // 6) якщо це МІЙ профіль — показуємо форму редагування
+                if (isOwnProfile) {
+                    document.getElementById('inputName').value = profile.full_name || "";
+                    document.getElementById('inputNick').value = profile.username || "";
+                    document.getElementById('inputBio').value = profile.about || "";
+                    document.getElementById('inputInsta').value = profile.instagram || "";
+                    document.getElementById('inputTiktok').value = profile.tiktok || "";
+                    document.getElementById('inputTelegram').value = profile.telegram || "";
+                    document.getElementById('inputAvatarUrl').value = avatar;
 
-                initAvatarSelector(avatar);
-            } else {
-                // якщо чужий профіль — ховаємо налаштування
-                const btnSettings = document.getElementById('btnSettings');
-                const btnSaved = document.getElementById('btnSaved');
-                const tabSettings = document.getElementById('settings');
-                const tabSaved = document.getElementById('saved');
+                    initAvatarSelector(avatar);
+                } else {
+                    // якщо ЧУЖИЙ профіль — ховаємо налаштування, збережені і кнопку "Створити рецепт"
+                    const btnSettings = document.getElementById('btnSettings');
+                    const btnSaved = document.getElementById('btnSaved');
+                    const tabSettings = document.getElementById('settings');
+                    const tabSaved = document.getElementById('saved');
+                    const btnCreate = document.getElementById('btnCreateRecipe');
+                    const title = document.getElementById('myRecipesTitle');
 
-                if (btnSettings) btnSettings.style.display = 'none';
-                if (tabSettings) tabSettings.style.display = 'none';
+                    if (btnSettings) btnSettings.style.display = 'none';
+                    if (tabSettings) tabSettings.style.display = 'none';
 
-                if (btnSaved) btnSaved.style.display = 'none';
-                if (tabSaved) tabSaved.style.display = 'none';
+                    if (btnSaved) btnSaved.style.display = 'none';
+                    if (tabSaved) tabSaved.style.display = 'none';
 
-                // активуємо вкладку "Мої рецепти" як головну
-                document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
-                document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-                document.getElementById('btnMyRecipes').classList.add('active');
-                document.getElementById('my-recipes').classList.add('active');
-            }
+                    if (btnCreate) btnCreate.style.display = 'none';
+                    if (title) title.textContent = 'Рецепти користувача';
 
-            // 7) Оновлюємо рівень по XP з профілю
-            updateLevel(profile.xp || 0);
+                    // активуємо одразу вкладку з рецептами
+                    document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+                    document.getElementById('btnMyRecipes').classList.add('active');
+                    document.getElementById('my-recipes').classList.add('active');
+                }
 
-            // 8) Завантажуємо рецепти того, чий профіль дивимось
-            loadUserRecipes(viewedUserId);
+                // 7) рівень по XP
+                updateLevel(profile.xp || 0);
 
-            // 9) Збережені рецепти має сенс показувати тільки для СВОГО профілю
-            if (isOwnProfile) {
-                loadSavedRecipes(currentUserId);
-            } else {
-                const savedContainer = document.getElementById('savedRecipesGrid');
-                if (savedContainer) {
-                    savedContainer.innerHTML = '<p style="color:#9ca3af;">Збережені рецепти недоступні для чужого профілю.</p>';
+                // 8) рецепти того, кого дивимось
+                loadUserRecipes(viewedUserId);
+
+                // 9) збережені — тільки для свого профілю
+                if (isOwnProfile) {
+                    loadSavedRecipes(currentUserId);
+                } else {
+                    const savedContainer = document.getElementById('savedRecipesGrid');
+                    if (savedContainer) {
+                        savedContainer.innerHTML =
+                            '<p style="color:#9ca3af;">Збережені рецепти недоступні для чужого профілю.</p>';
+                    }
                 }
             }
-        }
 
+     
 
         function updateSocial(id, url) {
             const el = document.getElementById(id);
@@ -1009,7 +1014,7 @@
         }
 
         // 5. СПИСКИ РЕЦЕПТІВ
-        async function loadUserRecipes(uid) {
+       async function loadUserRecipes(uid) {
             const { data: recipes } = await supabase
                 .from('recipes')
                 .select('*')
@@ -1017,8 +1022,11 @@
                 .order('created_at', { ascending: false });
 
             const container = document.getElementById('myRecipesGrid');
-            renderRecipeList(recipes, container, true, false);
+
+            // isEditable = тільки якщо це наш власний профіль
+            renderRecipeList(recipes, container, isOwnProfile, false);
         }
+
 
         async function loadSavedRecipes(uid) {
             const { data: saved } = await supabase
