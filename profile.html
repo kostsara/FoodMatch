@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <title>Мій профіль – FoodMatch</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Шрифт як на інших  -->
+    <!-- Шрифт -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -48,7 +48,7 @@
             cursor: pointer;
         }
 
-        /* HEADER – як на головній */
+        /* HEADER */
         header {
             position: sticky;
             top: 0;
@@ -491,7 +491,6 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
         }
 
-        /* 🔴 Бордова кнопка "Зберегти зміни" */
         .btn-save {
             background: var(--primary);
             color: #fff;
@@ -511,13 +510,14 @@
             box-shadow: 0 8px 22px rgba(161, 4, 4, 0.45);
         }
 
-        /* RECIPES LIST */
+        /* GRID ДЛЯ РЕЦЕПТІВ */
         .recipes-list {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 20px;
         }
 
+        /* СТАРІ МІНІ-КАРТКИ (МОЇ РЕЦЕПТИ) */
         .recipe-mini {
             background: white;
             border: 1px solid var(--border);
@@ -594,7 +594,7 @@
             background: #FEE2E2;
         }
 
-        /* Картки як на головній */
+        /* КАРТКИ ЯК НА ГОЛОВНІ (ЗБЕРЕЖЕНІ + РЕЦЕПТИ КОРИСТУВАЧА) */
         .recipe-card {
             border-radius: 20px;
             border: 1px solid #e5e7eb;
@@ -623,7 +623,6 @@
             font-size: 2rem;
         }
 
-        /* сердечко як на головній */
         .card-heart-btn {
             position: absolute;
             top: 10px;
@@ -705,7 +704,7 @@
             color: #111827;
         }
 
-        /* сердечко на збережених (старий стиль) */
+        /* Сердечко у “старому” стилі (я лишаю як запасний, але ми його не використовуємо) */
         .mini-heart-btn {
             position: absolute;
             top: 8px;
@@ -736,7 +735,7 @@
             background: #FEF2F2;
         }
 
-        /* MODAL (для збережених рецептів у профілі) */
+        /* MODAL – як на головній */
         .modal-backdrop {
             position: fixed;
             inset: 0;
@@ -768,12 +767,12 @@
             padding: 20px;
             border-bottom: 1px solid #e5e7eb;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 10px;
         }
 
         .modal-title {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: 800;
         }
 
@@ -792,7 +791,8 @@
             justify-content: center;
         }
 
-        .btn-heart:hover {
+        .btn-heart:hover,
+        .btn-heart.saved {
             background: #fdf2f2;
             color: #A10404;
         }
@@ -805,7 +805,7 @@
         .gallery-container {
             position: relative;
             width: 100%;
-            height: 260px;
+            height: 300px;
             margin-bottom: 20px;
             border-radius: 16px;
             overflow: hidden;
@@ -842,8 +842,8 @@
             backdrop-filter: blur(5px);
             color: white;
             border: none;
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             cursor: pointer;
             z-index: 2;
@@ -851,6 +851,8 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
+            font-size: 1.2rem;
+            transition: 0.2s;
         }
 
         .g-prev {
@@ -859,6 +861,110 @@
 
         .g-next {
             right: 10px;
+        }
+
+        .author-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding: 12px;
+            background: #f9fafb;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .author-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: block;
+        }
+
+        .author-info {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.3;
+        }
+
+        .author-label {
+            font-size: 0.75rem;
+            color: #6b7280;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .author-link {
+            font-weight: 700;
+            color: #111827;
+            font-size: 0.95rem;
+        }
+
+        .author-link:hover {
+            color: #A10404;
+            text-decoration: underline;
+        }
+
+        .reviews-section {
+            margin-top: 30px;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 20px;
+        }
+
+        .review-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 12px;
+        }
+
+        .review-form textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            resize: none;
+            font-family: inherit;
+        }
+
+        .star-rating {
+            display: flex;
+            gap: 5px;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #e5e7eb;
+        }
+
+        .star-rating span:hover,
+        .star-rating span.active {
+            color: #fbbf24;
+        }
+
+        .review-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #e5e7eb;
+        }
+
+        .review-author {
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .review-text {
+            font-size: 0.9rem;
+            color: #4b5563;
+            margin-top: 4px;
         }
 
         @keyframes fadeIn {
@@ -894,7 +1000,6 @@
     </header>
 
     <div class="container">
-
         <aside>
             <div class="profile-card">
                 <div class="avatar-box" id="sidebarAvatar">FM</div>
@@ -938,13 +1043,11 @@
         </aside>
 
         <main>
-
             <div id="settings" class="content-section active">
                 <h1 class="section-title-main">Налаштування профілю</h1>
 
                 <div class="settings-box">
                     <form onsubmit="saveProfile(event)">
-
                         <div class="form-section-title">Оберіть персонажа або фото</div>
 
                         <div class="avatar-grid" id="avatarSelector">
@@ -1031,41 +1134,59 @@
                     </div>
                 </div>
             </div>
-
         </main>
     </div>
 
-    <!-- Модалка для збережених рецептів у профілі -->
-    <div class="modal-backdrop" id="profileRecipeModal">
+    <!-- Модалка рецепта як на головній -->
+    <div class="modal-backdrop" id="recipeModal">
         <div class="modal">
             <div class="modal-header">
-                <div class="modal-title" id="pModalTitle"></div>
-                <div style="margin-left:auto; display:flex; gap:10px; align-items:center;">
-                    <button class="btn-heart" onclick="unsaveFromModal()" title="Прибрати зі збережених">♥</button>
-                    <button onclick="closeProfileModal()"
-                        style="border:none; background:none; font-size:2rem; color:#9ca3af; cursor:pointer;">&times;</button>
+                <div style="display:flex; align-items:center; gap:15px; flex:1;">
+                    <div class="modal-title" id="mTitle"></div>
+                    <button id="btnSaveModal" class="btn-heart" title="Зберегти">♥</button>
                 </div>
+                <button onclick="closeModal()"
+                    style="border:none; background:none; font-size:2rem; color:#9ca3af; cursor:pointer;">&times;
+                </button>
             </div>
             <div class="modal-body">
-                <div class="gallery-container">
-                    <button class="gallery-btn g-prev" id="pPrev" onclick="scrollProfileGallery(-1)">&#10094;</button>
-                    <button class="gallery-btn g-next" id="pNext" onclick="scrollProfileGallery(1)">&#10095;</button>
-                    <div id="pModalGallery" class="modal-gallery"></div>
+                <div class="gallery-container" id="galleryContainer">
+                    <button class="gallery-btn g-prev" id="btnPrev" onclick="scrollGallery(-1)">&#10094;</button>
+                    <button class="gallery-btn g-next" id="btnNext" onclick="scrollGallery(1)">&#10095;</button>
+                    <div id="mGallery" class="modal-gallery"></div>
                 </div>
+
+                <div id="mAuthor" class="author-row" style="display:none;"></div>
 
                 <div
                     style="display:flex; flex-wrap:wrap; gap:20px; margin-bottom:10px; font-size:0.95rem; color:#4b5563;">
-                    <span id="pModalTime"></span>
-                    <span id="pModalCal"></span>
+                    <span id="mTime"></span>
+                    <span id="mCal"></span>
                 </div>
 
-                <div id="pModalMetaTags" class="meta-tags-row" style="margin-bottom:25px;"></div>
+                <div id="mMetaTags" class="meta-tags-row" style="margin-bottom:25px;"></div>
 
                 <h3 style="font-size:1.1rem; margin-bottom:15px;">Інгредієнти</h3>
-                <ul id="pModalIng" style="margin-bottom:30px; padding-left:20px; list-style:none;"></ul>
+                <ul id="mIng" style="margin-bottom:30px; padding-left:20px; list-style:none;"></ul>
 
                 <h3 style="font-size:1.1rem; margin-bottom:15px;">Приготування</h3>
-                <ol id="pModalSteps" style="padding-left:20px; font-size:1rem; line-height:1.7; color:#374151;"></ol>
+                <ol id="mSteps" style="padding-left:20px; font-size:1rem; line-height:1.7; color:#374151;"></ol>
+
+                <div class="reviews-section">
+                    <h3 class="section-label" style="margin-bottom:15px;">Відгуки та оцінки</h3>
+                    <div class="review-form">
+                        <div class="star-rating" id="starRating">
+                            <span data-val="1">★</span><span data-val="2">★</span><span data-val="3">★</span><span
+                                data-val="4">★</span><span data-val="5">★</span>
+                        </div>
+                        <textarea id="reviewText" rows="2" placeholder="Напишіть, як вам страва..."></textarea>
+                        <button onclick="sendReview()" class="pill-btn active"
+                            style="width:100%; background:#A10404; border-color:#A10404; color:white;">
+                            Надіслати відгук
+                        </button>
+                    </div>
+                    <div id="reviewsList"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -1076,25 +1197,23 @@
     <script>
         // 1. ІНІЦІАЛІЗАЦІЯ
         const EMOJI_AVATARS = ['👨‍🍳', '👩‍🍳', '🍔', '🍕', '🥗', '🥑', '🥦', '🍓', '🍩', '🥐', '☕', '🍱'];
-        let currentUserId = null;
-        let viewedUserId = null;   // чий профіль показуємо
-        let isOwnProfile = true;   // чи це наш профіль, чи чужий
 
-        // для модалки збережених
-        let profileRecipes = {};
-        let currentProfileRecipeId = null;
+        let currentUser = null;      // об'єкт користувача
+        let currentUserId = null;    // id залогіненого
+        let viewedUserId = null;     // чий профіль дивимось
+        let isOwnProfile = true;     // свій чи чужий
 
-        // 🔥 Константи системи рівнів
-        const LEVEL_RANGE = 1000; // 0–1000 XP на рівень
-        const LEVEL_NAMES = [
-            "Новачок",   // рівень 0
-            "Любитель",  // рівень 1
-            "Су-шеф",    // рівень 2
-            "Шеф",       // рівень 3
-            "Легенда"    // рівень 4+
-        ];
+        let savedRecipeIds = new Set(); // id рецептів, які збережені поточним юзером
+        let currentRecipeId = null;     // id рецепта, відкритого в модалці
+        let currentRating = 0;          // рейтинг у зірочках
 
-        // Для тегів як на головній
+        const profileRecipesMap = new Map(); // id → рецепт (для модалки)
+
+        // XP система
+        const LEVEL_RANGE = 1000;
+        const LEVEL_NAMES = ["Новачок", "Любитель", "Су-шеф", "Шеф", "Легенда"];
+
+        // Теги особливостей
         const FEATURE_LABELS = {
             is_vegan: 'Веганське',
             is_vegetarian: 'Вегетаріанське',
@@ -1116,8 +1235,7 @@
             return null;
         }
 
-        document.addEventListener('DOMContentLoaded', loadProfile);
-
+        // Аватарки
         function initAvatarSelector(currentUrl) {
             const container = document.getElementById('avatarSelector');
             while (container.children.length > 1) {
@@ -1139,7 +1257,8 @@
         }
 
         function selectAvatar(value) {
-            document.getElementById('inputAvatarUrl').value = value;
+            const inputAvatar = document.getElementById('inputAvatarUrl');
+            if (inputAvatar) inputAvatar.value = value;
             const sidebarAvatar = document.getElementById('sidebarAvatar');
             if (value.startsWith('http')) {
                 sidebarAvatar.innerHTML = `<img src="${value}" style="width:100%; height:100%; object-fit:cover;">`;
@@ -1148,22 +1267,20 @@
             }
         }
 
-        // 2. ЗАВАНТАЖЕННЯ ДАНИХ
+        // 2. ЗАВАНТАЖЕННЯ ПРОФІЛЮ
         async function loadProfile() {
-            // 1) id з URL, якщо прийшли з рецепта: profile.html?id=...
             const params = new URLSearchParams(window.location.search);
             const foreignId = params.get('id');
 
-            // 2) поточний залогінений юзер
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) {
                 window.location.href = "login.html";
                 return;
             }
 
+            currentUser = user;
             currentUserId = user.id;
 
-            // 3) вирішуємо, свій чи чужий профіль
             if (foreignId && foreignId !== user.id) {
                 viewedUserId = foreignId;
                 isOwnProfile = false;
@@ -1172,7 +1289,7 @@
                 isOwnProfile = true;
             }
 
-            // 3.1. Оновлюємо кнопку в хедері
+            // Кнопка в хедері
             const topNavBtn = document.getElementById('topNavBtn');
             if (topNavBtn) {
                 if (isOwnProfile) {
@@ -1180,11 +1297,11 @@
                     topNavBtn.href = 'index.html';
                 } else {
                     topNavBtn.textContent = 'профіль';
-                    topNavBtn.href = 'profile.html'; // без id → свій профіль
+                    topNavBtn.href = 'profile.html';
                 }
             }
 
-            // 4) тягнемо профіль того, кого дивимось
+            // Профіль
             const { data: profile } = await supabase
                 .from('profiles')
                 .select('*')
@@ -1196,7 +1313,6 @@
                 return;
             }
 
-            // 5) сайдбар
             document.getElementById('sidebarName').textContent = profile.full_name || "Користувач";
             document.getElementById('sidebarNick').textContent = profile.username ? `@${profile.username}` : "@...";
             document.getElementById('sidebarBio').textContent = profile.about || "Напишіть про себе...";
@@ -1208,7 +1324,6 @@
             updateSocial('linkTiktok', profile.tiktok);
             updateSocial('linkTelegram', profile.telegram);
 
-            // 6) якщо це МІЙ профіль — показуємо форму редагування
             if (isOwnProfile) {
                 document.getElementById('inputName').value = profile.full_name || "";
                 document.getElementById('inputNick').value = profile.username || "";
@@ -1220,8 +1335,6 @@
 
                 initAvatarSelector(avatar);
             } else {
-                // якщо ЧУЖИЙ профіль — ховаємо налаштування, збережені,
-                // кнопку "Створити рецепт" і "Вийти"
                 const btnSettings = document.getElementById('btnSettings');
                 const btnSaved = document.getElementById('btnSaved');
                 const tabSettings = document.getElementById('settings');
@@ -1243,22 +1356,24 @@
                 if (title) title.textContent = 'Рецепти користувача';
                 if (btnMyRecipes) btnMyRecipes.textContent = 'Рецепти користувача';
 
-                // активуємо одразу вкладку з рецептами
                 document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
                 document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
                 if (btnMyRecipes) btnMyRecipes.classList.add('active');
                 document.getElementById('my-recipes').classList.add('active');
             }
 
-            // 7) рівень по XP
+            // XP
             updateLevel(profile.xp || 0);
 
-            // 8) рецепти того, кого дивимось
-            loadUserRecipes(viewedUserId);
+            // Спочатку тягнемо, що вже збережено
+            await fetchSavedRecipesForProfile();
 
-            // 9) збережені — тільки для свого профілю
+            // Рецепти користувача
+            await loadUserRecipes(viewedUserId);
+
+            // Збережені – тільки якщо свій профіль
             if (isOwnProfile) {
-                loadSavedRecipes(currentUserId);
+                await loadSavedRecipes(currentUserId);
             } else {
                 const savedContainer = document.getElementById('savedRecipesGrid');
                 if (savedContainer) {
@@ -1266,6 +1381,17 @@
                         '<p style="color:#9ca3af;">Збережені рецепти недоступні для чужого профілю.</p>';
                 }
             }
+
+            // Зірочки рейтингу
+            const stars = document.querySelectorAll('#starRating span');
+            stars.forEach(star => {
+                star.addEventListener('click', () => {
+                    currentRating = Number(star.dataset.val);
+                    stars.forEach(s =>
+                        s.classList.toggle('active', Number(s.dataset.val) <= currentRating)
+                    );
+                });
+            });
         }
 
         function updateSocial(id, url) {
@@ -1278,7 +1404,7 @@
             }
         }
 
-        // 3. ЗАВАНТАЖЕННЯ ФОТО
+        // Аватар завантаження
         async function uploadCustomAvatar(input) {
             const file = input.files[0];
             if (!file) return;
@@ -1301,7 +1427,7 @@
             document.body.style.cursor = 'default';
         }
 
-        // 4. ЗБЕРЕЖЕННЯ ПРОФІЛЮ
+        // Збереження профілю
         async function saveProfile(e) {
             e.preventDefault();
             const { data: { user } } = await supabase.auth.getUser();
@@ -1327,43 +1453,70 @@
             }
         }
 
-        // 5. СПИСКИ РЕЦЕПТІВ
+        // 3. Збережені поточного юзера (для сердець)
+        async function fetchSavedRecipesForProfile() {
+            if (!currentUserId) return;
+            const { data, error } = await supabase
+                .from('saved_recipes')
+                .select('recipe_id')
+                .eq('user_id', currentUserId);
+
+            if (error) {
+                console.error('Помилка завантаження збережених:', error.message);
+                return;
+            }
+
+            savedRecipeIds = new Set((data || []).map(row => row.recipe_id));
+        }
+
+        // 4. Рецепти користувача
         async function loadUserRecipes(uid) {
-            const { data: recipes } = await supabase
+            const { data: recipes, error } = await supabase
                 .from('recipes')
                 .select('*')
                 .eq('author_id', uid)
                 .order('created_at', { ascending: false });
 
-            const container = document.getElementById('myRecipesGrid');
+            if (error) {
+                console.error('Помилка завантаження рецептів користувача:', error.message);
+            }
 
-            // isEditable = тільки якщо це наш власний профіль
-            renderRecipeList(recipes, container, isOwnProfile, false);
+            const container = document.getElementById('myRecipesGrid');
+            const safeRecipes = recipes || [];
+            safeRecipes.forEach(r => {
+                if (r) profileRecipesMap.set(r.id, r);
+            });
+
+            renderRecipeList(safeRecipes, container, isOwnProfile, false);
         }
 
+        // 5. Збережені рецепти
         async function loadSavedRecipes(uid) {
-            const { data: saved } = await supabase
+            const { data: saved, error } = await supabase
                 .from('saved_recipes')
                 .select('recipe_id, recipes(*)')
                 .eq('user_id', uid);
 
             const container = document.getElementById('savedRecipesGrid');
 
-            profileRecipes = {};
+            if (error) {
+                console.error('Помилка завантаження збережених:', error.message);
+                container.innerHTML = '<p style="color:#9ca3af;">Помилка завантаження.</p>';
+                return;
+            }
 
             if (saved && saved.length > 0) {
-                const recipes = saved.map(item => item.recipes);
-                recipes.forEach(r => {
-                    if (r && r.id) profileRecipes[r.id] = r;
-                });
+                const recipes = saved.map(item => item.recipes).filter(Boolean);
+                recipes.forEach(r => profileRecipesMap.set(r.id, r));
                 renderRecipeList(recipes, container, false, true);
             } else {
                 container.innerHTML = '<p style="color:#9ca3af;">Поки що пусто.</p>';
             }
         }
 
-        // isEditable = "мої рецепти" (редагувати + видалити)
-        // isSavedList = "збережені" (красиві картки + модалка)
+        // 6. Рендер списків
+        // isEditable = свій профіль → міні-картки з редагуванням
+        // isSavedList = вкладка “Збережені”
         function renderRecipeList(recipes, container, isEditable, isSavedList = false) {
             container.innerHTML = '';
             if (!recipes || !recipes.length) {
@@ -1372,14 +1525,25 @@
             }
 
             recipes.forEach(r => {
+                if (!r) return;
+                profileRecipesMap.set(r.id, r);
+
                 let img = '';
                 if (r.image_url) {
                     if (Array.isArray(r.image_url) && r.image_url.length > 0) img = r.image_url[0];
                     else if (typeof r.image_url === 'string') img = r.image_url;
                 }
 
-                // 🔴 Вигляд для "Збережені" – як на головній + відкриття модалки
-                if (isSavedList) {
+                // Випадок 1: Збережені або чужий профіль → КАРТКА ЯК НА ГОЛОВНІ
+                if (isSavedList || !isEditable) {
+                    const card = document.createElement('article');
+                    card.className = 'recipe-card';
+                    card.dataset.id = r.id;
+
+                    const bgStyle = img
+                        ? `background-image:url('${img}'); background-size:cover; background-position:center;`
+                        : 'background: linear-gradient(135deg, #fee2e2, #fecaca);';
+
                     const features = getRecipeFeaturesProfile(r);
                     const spiceText = spiceLabelProfile(r.spiciness);
 
@@ -1394,32 +1558,48 @@
                         spiceHtml = `<span class="tag tag-spice">${spiceText}</span>`;
                     }
 
-                    const bgStyle = img
-                        ? `background-image:url('${img}'); background-size:cover; background-position:center;`
-                        : 'background: linear-gradient(135deg, #fee2e2, #fecaca);';
+                    const isSaved = savedRecipeIds.has(r.id);
 
-                    container.innerHTML += `
-                    <div class="recipe-card" onclick="openProfileRecipeModal('${r.id}')">
-                        <div class="recipe-img" style="${bgStyle}"></div>
-                        <button class="card-heart-btn saved"
-                            onclick="event.stopPropagation(); unsaveFromCard('${r.id}', this)">♥</button>
-                        <div class="card-content">
-                            <div class="recipe-title">${r.title}</div>
-                            <div class="recipe-meta">
-                                <span>⏱ ${r.time_minutes} хв</span>
-                                <span>${r.calories || 0} ккал</span>
-                            </div>
-                            <div class="meta-tags-row">
-                                ${featuresHtml}
-                                ${spiceHtml}
-                            </div>
+                    card.innerHTML = `
+                    <div class="recipe-img" style="${bgStyle}"></div>
+                    <button class="card-heart-btn ${isSaved ? 'saved' : ''}">♥</button>
+                    <div class="card-content">
+                        <div class="recipe-title">${r.title}</div>
+                        <div class="recipe-meta">
+                            <span>⏱ ${r.time_minutes || 0} хв</span>
+                            <span>${r.calories || 0} ккал</span>
+                        </div>
+                        <div class="meta-tags-row">
+                            ${featuresHtml}
+                            ${spiceHtml}
                         </div>
                     </div>
                 `;
-                    return; // для saved далі не йдемо
+
+                    const heartBtn = card.querySelector('.card-heart-btn');
+
+                    heartBtn.addEventListener('click', async (e) => {
+                        e.stopPropagation();
+                        if (!currentUserId) {
+                            alert("Увійдіть, щоб зберігати!");
+                            return;
+                        }
+                        if (isSavedList) {
+                            await toggleSavedProfile(r.id, card, heartBtn);
+                        } else {
+                            await toggleSaveOnProfileList(r.id, heartBtn);
+                        }
+                    });
+
+                    card.addEventListener('click', () => {
+                        openProfileModal(r.id);
+                    });
+
+                    container.appendChild(card);
+                    return;
                 }
 
-                // 🟢 Вигляд для "Мої рецепти" / рецепти користувача (старі міні-картки)
+                // Випадок 2: свої рецепти → старі міні-картки з редагуванням
                 let actionsHtml = '';
                 if (isEditable) {
                     actionsHtml = `
@@ -1438,22 +1618,77 @@
 
                 const placeholderText = img ? '' : 'Без фото';
 
-                container.innerHTML += `
-                <div class="recipe-mini">
-                    <div class="rm-img" style="${imgStyle}">
-                        ${placeholderText}
-                    </div>
-                    <div class="rm-body">
-                        <div class="rm-title">${r.title}</div>
-                        <div class="rm-meta">⏱ ${r.time_minutes} хв</div>
-                        ${actionsHtml}
-                    </div>
+                const mini = document.createElement('div');
+                mini.className = 'recipe-mini';
+                mini.innerHTML = `
+                <div class="rm-img" style="${imgStyle}">
+                    ${placeholderText}
+                </div>
+                <div class="rm-body">
+                    <div class="rm-title">${r.title}</div>
+                    <div class="rm-meta">⏱ ${r.time_minutes || 0} хв</div>
+                    ${actionsHtml}
                 </div>
             `;
+                container.appendChild(mini);
             });
         }
 
-        // видалення власного рецепта
+        // 7. Тогл збереженого у вкладці "Збережені" (з видаленням картки)
+        async function toggleSavedProfile(recipeId, cardEl, btnEl) {
+            if (!currentUserId) return;
+            const { error } = await supabase
+                .from('saved_recipes')
+                .delete()
+                .match({ user_id: currentUserId, recipe_id: recipeId });
+
+            if (error) {
+                alert('Не вдалося оновити збережене: ' + error.message);
+                return;
+            }
+
+            savedRecipeIds.delete(recipeId);
+            if (btnEl) btnEl.classList.remove('saved');
+            if (cardEl) cardEl.remove();
+
+            const container = document.getElementById('savedRecipesGrid');
+            if (container && container.children.length === 0) {
+                container.innerHTML = '<p style="color:#9ca3af;">Поки що пусто.</p>';
+            }
+        }
+
+        // 8. Тогл збереженого у списку рецептів користувача (НЕ видаляємо картку)
+        async function toggleSaveOnProfileList(recipeId, btnEl) {
+            if (!currentUserId) return;
+            const isSavedNow = savedRecipeIds.has(recipeId);
+
+            if (isSavedNow) {
+                const { error } = await supabase
+                    .from('saved_recipes')
+                    .delete()
+                    .match({ user_id: currentUserId, recipe_id: recipeId });
+
+                if (error) {
+                    alert('Не вдалося оновити збережене: ' + error.message);
+                    return;
+                }
+                savedRecipeIds.delete(recipeId);
+                if (btnEl) btnEl.classList.remove('saved');
+            } else {
+                const { error } = await supabase
+                    .from('saved_recipes')
+                    .insert([{ user_id: currentUserId, recipe_id: recipeId }]);
+
+                if (error) {
+                    alert('Не вдалося оновити збережене: ' + error.message);
+                    return;
+                }
+                savedRecipeIds.add(recipeId);
+                if (btnEl) btnEl.classList.add('saved');
+            }
+        }
+
+        // 9. Видалення власного рецепта
         async function deleteRecipe(id) {
             if (!confirm('Видалити рецепт назавжди?')) return;
             const { error } = await supabase.from('recipes').delete().eq('id', id);
@@ -1466,31 +1701,7 @@
             }
         }
 
-        // відкріпити рецепт із "Збережених" по кліку на сердечко в картці
-        async function unsaveFromCard(recipeId, btn) {
-            if (!currentUserId) return;
-            const { error } = await supabase
-                .from('saved_recipes')
-                .delete()
-                .match({ user_id: currentUserId, recipe_id: recipeId });
-
-            if (error) {
-                alert('Не вдалося оновити збережене: ' + error.message);
-                return;
-            }
-
-            // прибираємо картку в UI
-            const card = btn.closest('.recipe-card') || btn.closest('.recipe-mini');
-            if (card) card.remove();
-
-            const container = document.getElementById('savedRecipesGrid');
-            if (container && container.children.length === 0) {
-                container.innerHTML = '<p style="color:#9ca3af;">Поки що пусто.</p>';
-            }
-        }
-
-        // 6. РІВЕНЬ
-
+        // 10. Рівень
         function getLevelIndex(totalXp) {
             let idx = Math.floor(totalXp / LEVEL_RANGE);
             if (idx < 0) idx = 0;
@@ -1502,8 +1713,8 @@
             const levelIndex = getLevelIndex(totalXp);
             const levelName = LEVEL_NAMES[levelIndex];
 
-            const xpInLevel = totalXp % LEVEL_RANGE;      // 0–999
-            const xpToNext = LEVEL_RANGE - xpInLevel;     // скільки лишилось до наступного
+            const xpInLevel = totalXp % LEVEL_RANGE;
+            const xpToNext = LEVEL_RANGE - xpInLevel;
             const percent = (xpInLevel / LEVEL_RANGE) * 100;
 
             document.getElementById('levelName').textContent = levelName;
@@ -1559,6 +1770,232 @@
             }
         }
 
+        // 11. Модалка рецепта
+        function openProfileModal(recipeId) {
+            const r = profileRecipesMap.get(recipeId);
+            if (!r) return;
+
+            currentRecipeId = r.id;
+
+            document.getElementById('mTitle').textContent = r.title || '';
+            document.getElementById('mTime').textContent = `⏱ ${r.time_minutes || 0} хв`;
+            document.getElementById('mCal').textContent = `${r.calories || 0} ккал`;
+
+            const gallery = document.getElementById('mGallery');
+            gallery.innerHTML = '';
+            let photos = Array.isArray(r.image_url) ? r.image_url : (r.image_url ? [r.image_url] : []);
+            if (photos.length === 0) {
+                const empty = document.createElement('div');
+                empty.style.width = '100%';
+                empty.style.height = '100%';
+                gallery.appendChild(empty);
+            } else {
+                photos.forEach(url => {
+                    const img = document.createElement('img');
+                    img.src = url;
+                    gallery.appendChild(img);
+                });
+            }
+
+            document.getElementById('btnPrev').style.display = photos.length > 1 ? 'flex' : 'none';
+            document.getElementById('btnNext').style.display = photos.length > 1 ? 'flex' : 'none';
+
+            // Автор – тут можна заховати або доопрацювати (зараз ховаю)
+            const authBlock = document.getElementById('mAuthor');
+            if (authBlock) authBlock.style.display = 'none';
+
+            const ul = document.getElementById('mIng');
+            ul.innerHTML = '';
+            if (Array.isArray(r.ingredients)) {
+                r.ingredients.forEach(ing => {
+                    const li = document.createElement('li');
+                    li.style.marginBottom = '8px';
+                    li.innerHTML = `<b>${ing.name || ''}</b>: ${ing.amount || ''}`;
+                    ul.appendChild(li);
+                });
+            }
+
+            const ol = document.getElementById('mSteps');
+            ol.innerHTML = '';
+            if (Array.isArray(r.steps)) {
+                r.steps.forEach(s => {
+                    const li = document.createElement('li');
+                    li.textContent = s;
+                    li.style.marginBottom = '10px';
+                    ol.appendChild(li);
+                });
+            }
+
+            const mMetaTags = document.getElementById('mMetaTags');
+            mMetaTags.innerHTML = '';
+            const features = getRecipeFeaturesProfile(r);
+            features.forEach(f => {
+                const label = FEATURE_LABELS[f] || f;
+                mMetaTags.innerHTML += `<span class="tag tag-feature">${label}</span>`;
+            });
+            const sText = spiceLabelProfile(r.spiciness);
+            if (sText) {
+                mMetaTags.innerHTML += `<span class="tag tag-spice">${sText}</span>`;
+            }
+
+            checkIfSavedInModalProfile();
+            resetStarsUI();
+            loadReviewsProfile();
+
+            document.getElementById('recipeModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('recipeModal').classList.remove('show');
+        }
+
+        function scrollGallery(dir) {
+            const g = document.getElementById('mGallery');
+            g.scrollBy({ left: g.clientWidth * dir, behavior: 'smooth' });
+        }
+
+        function resetStarsUI() {
+            currentRating = 0;
+            document.querySelectorAll('#starRating span').forEach(s => s.classList.remove('active'));
+        }
+
+        const btnSaveModal = document.getElementById('btnSaveModal');
+        btnSaveModal.onclick = async () => {
+            if (!currentUserId) {
+                alert("Увійдіть!");
+                return;
+            }
+            if (!currentRecipeId) return;
+
+            if (btnSaveModal.classList.contains('saved')) {
+                const { error } = await supabase
+                    .from('saved_recipes')
+                    .delete()
+                    .match({ user_id: currentUserId, recipe_id: currentRecipeId });
+
+                if (error) {
+                    alert("Не вдалося оновити збережене: " + error.message);
+                    return;
+                }
+                btnSaveModal.classList.remove('saved');
+                savedRecipeIds.delete(currentRecipeId);
+            } else {
+                const { error } = await supabase
+                    .from('saved_recipes')
+                    .insert([{ user_id: currentUserId, recipe_id: currentRecipeId }]);
+
+                if (error) {
+                    alert("Не вдалося оновити збережене: " + error.message);
+                    return;
+                }
+                btnSaveModal.classList.add('saved');
+                savedRecipeIds.add(currentRecipeId);
+            }
+
+            // Оновлюємо серце на картці
+            const cardHeart = document.querySelector(`.recipe-card[data-id="${currentRecipeId}"] .card-heart-btn`);
+            if (cardHeart) {
+                if (savedRecipeIds.has(currentRecipeId)) {
+                    cardHeart.classList.add('saved');
+                } else {
+                    cardHeart.classList.remove('saved');
+                }
+            }
+
+            // Якщо це вкладка "Збережені" і ми роззберегли – приберемо картку
+            const savedGrid = document.getElementById('savedRecipesGrid');
+            if (savedGrid && cardHeart && savedGrid.contains(cardHeart)) {
+                const card = cardHeart.closest('.recipe-card');
+                if (card && !savedRecipeIds.has(currentRecipeId)) {
+                    card.remove();
+                    if (savedGrid.children.length === 0) {
+                        savedGrid.innerHTML = '<p style="color:#9ca3af;">Поки що пусто.</p>';
+                    }
+                }
+            }
+        };
+
+        function checkIfSavedInModalProfile() {
+            btnSaveModal.classList.toggle('saved', savedRecipeIds.has(currentRecipeId));
+        }
+
+        // Відгуки
+        async function sendReview() {
+            if (!currentUser) return alert("Увійдіть!");
+            const text = document.getElementById('reviewText').value;
+            if (!currentRating) return alert("Оберіть оцінку!");
+            const { error } = await supabase.from('reviews').insert([{
+                recipe_id: currentRecipeId,
+                user_id: currentUser.id,
+                rating: currentRating,
+                comment: text
+            }]);
+            if (!error) {
+                document.getElementById('reviewText').value = "";
+                resetStarsUI();
+                loadReviewsProfile();
+            }
+        }
+
+        async function loadReviewsProfile() {
+            const list = document.getElementById('reviewsList');
+            list.innerHTML = '...';
+            const { data: reviews } = await supabase.from('reviews')
+                .select('*, profiles(full_name)')
+                .eq('recipe_id', currentRecipeId)
+                .order('created_at', { ascending: false });
+
+            list.innerHTML = '';
+            if (!reviews || !reviews.length) {
+                list.innerHTML = '<p style="color:#888; font-size:0.9rem;">Немає відгуків.</p>';
+                return;
+            }
+            reviews.forEach(rev => {
+                const div = document.createElement('div');
+                div.className = 'review-item';
+                const stars = '★'.repeat(rev.rating);
+                const name = rev.profiles ? rev.profiles.full_name : 'Гість';
+                const canDelete = currentUser && currentUser.id === rev.user_id;
+
+                div.innerHTML = `
+                <div class="review-author">
+                    <span>${name}</span>
+                    <span>
+                        <span style="color:#fbbf24;">${stars}</span>
+                        ${canDelete ? `
+                            <button class="reset-link" style="margin-left:8px;" onclick="deleteReviewProfile('${rev.id}')">
+                                Видалити
+                            </button>
+                        ` : ''}
+                    </span>
+                </div>
+                <div class="review-text">${rev.comment || ''}</div>
+            `;
+                list.appendChild(div);
+            });
+        }
+
+        async function deleteReviewProfile(reviewId) {
+            if (!currentUser) {
+                alert("Увійдіть, щоб видаляти відгуки!");
+                return;
+            }
+            const { error } = await supabase
+                .from('reviews')
+                .delete()
+                .match({
+                    id: reviewId,
+                    user_id: currentUser.id
+                });
+
+            if (error) {
+                console.error('Помилка видалення відгуку:', error.message);
+                alert("Не вдалося видалити відгук. Спробуйте пізніше.");
+                return;
+            }
+            loadReviewsProfile();
+        }
+
         function openTab(tabId, btn) {
             document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
@@ -1571,100 +2008,10 @@
             window.location.href = "index.html";
         }
 
-        // ---- МОДАЛКА ПРОФІЛЮ (ЗБЕРЕЖЕНІ РЕЦЕПТИ) ----
-
-        function openProfileRecipeModal(id) {
-            const r = profileRecipes[id];
-            if (!r) return;
-
-            currentProfileRecipeId = id;
-
-            document.getElementById('pModalTitle').textContent = r.title;
-            document.getElementById('pModalTime').textContent = `⏱ ${r.time_minutes} хв`;
-            document.getElementById('pModalCal').textContent = `${r.calories || 0} ккал`;
-
-            // Галерея
-            const gallery = document.getElementById('pModalGallery');
-            gallery.innerHTML = '';
-            let photos = Array.isArray(r.image_url)
-                ? r.image_url
-                : (r.image_url ? [r.image_url] : []);
-
-            if (photos.length === 0) {
-                document.getElementById('pPrev').style.display = 'none';
-                document.getElementById('pNext').style.display = 'none';
-                gallery.innerHTML = '<div style="flex:1;background:#fff;"></div>';
-            } else {
-                photos.forEach(url => {
-                    const img = document.createElement('img');
-                    img.src = url;
-                    gallery.appendChild(img);
-                });
-                document.getElementById('pPrev').style.display = photos.length > 1 ? 'flex' : 'none';
-                document.getElementById('pNext').style.display = photos.length > 1 ? 'flex' : 'none';
-            }
-
-            // Теги
-            const metaTags = document.getElementById('pModalMetaTags');
-            metaTags.innerHTML = '';
-
-            const feats = getRecipeFeaturesProfile(r);
-            feats.forEach(f => {
-                const label = FEATURE_LABELS[f] || f;
-                metaTags.innerHTML += `<span class="tag tag-feature">${label}</span>`;
-            });
-
-            const spice = spiceLabelProfile(r.spiciness);
-            if (spice) {
-                metaTags.innerHTML += `<span class="tag tag-spice">${spice}</span>`;
-            }
-
-            // Інгредієнти
-            const ul = document.getElementById('pModalIng');
-            ul.innerHTML = '';
-            if (r.ingredients) {
-                r.ingredients.forEach(ing => {
-                    ul.innerHTML += `<li><b>${ing.name}</b>: ${ing.amount}</li>`;
-                });
-            }
-
-            // Кроки
-            const ol = document.getElementById('pModalSteps');
-            ol.innerHTML = '';
-            if (r.steps) {
-                r.steps.forEach(s => {
-                    ol.innerHTML += `<li>${s}</li>`;
-                });
-            }
-
-            document.getElementById('profileRecipeModal').classList.add('show');
-        }
-
-        function closeProfileModal() {
-            document.getElementById('profileRecipeModal').classList.remove('show');
-        }
-
-        function scrollProfileGallery(dir) {
-            const g = document.getElementById('pModalGallery');
-            g.scrollBy({ left: g.clientWidth * dir, behavior: 'smooth' });
-        }
-
-        async function unsaveFromModal() {
-            if (!currentUserId || !currentProfileRecipeId) return;
-
-            const { error } = await supabase
-                .from('saved_recipes')
-                .delete()
-                .match({ user_id: currentUserId, recipe_id: currentProfileRecipeId });
-
-            if (error) {
-                alert('Не вдалося оновити збережене: ' + error.message);
-                return;
-            }
-
-            closeProfileModal();
-            loadSavedRecipes(currentUserId);
-        }
+        // Старт
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProfile();
+        });
     </script>
 
 </body>
