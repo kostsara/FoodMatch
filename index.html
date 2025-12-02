@@ -983,6 +983,7 @@
                             <button onclick="clearTags()" class="reset-link">Скинути все</button>
                         </div>
                     </div>
+                    
 
                     <div class="filter-block">
                         <div class="section-label section-label-sub">Часто додають</div>
@@ -1008,6 +1009,11 @@
                         1–4 — скільки може бракувати<br>
                         5 — не враховувати відсутні
                     </div>
+
+                    <div style="margin-top:25px; text-align:left;">
+                        <button class="reset-link" onclick="clearAllFilters()">Скинути всі фільтри</button>
+                    </div>
+
                 </aside>
 
                 <section class="results">
@@ -1784,6 +1790,44 @@
                 applyFilters();
             };
         }
+
+        function clearAllFilters() {
+                // 1. Скидаємо тип страви
+                state.type = 'all';
+                document.querySelectorAll('#mealTypeRow button').forEach(btn => btn.classList.remove('active'));
+                document.querySelector('#mealTypeRow button[data-type="all"]').classList.add('active');
+
+                // 2. Скидаємо особливості
+                state.features.clear();
+                document.querySelectorAll('#featuresRow .pill-btn').forEach(btn => btn.classList.remove('active'));
+
+                // 3. Скидаємо гостроту
+                state.spice = 'all';
+                document.querySelectorAll('#spiceRow .pill-btn').forEach(btn => btn.classList.remove('active'));
+
+                // 4. Скидаємо інгредієнти в холодильнику
+                state.have.clear();
+                localStorage.setItem('myFridge', '[]');
+                renderTags();
+
+                // 5. Скидаємо алергії
+                state.allergies.clear();
+                localStorage.setItem('myAllergies', '[]');
+                renderAllergyTags();
+
+                // 6. Скидаємо пошук
+                state.recipeSearch = '';
+                document.getElementById('recipeSearch').value = '';
+
+                // 7. Скидаємо слайдер відсутніх
+                state.maxMissing = 5;
+                document.getElementById('missingRange').value = 5;
+                document.getElementById('missingLabel').textContent = '5';
+
+                // Оновити результати
+                applyFilters();
+            }
+
     </script>
 </body>
 
