@@ -570,24 +570,23 @@
         }
 
         .tag-good {
-            background: #dcfce7;
-            color: #166534;
-        }
+    background: #dcfce7;
+    color: #166534;
+}
 
-        .tag-missing {
-            background: #faf3d7;
-            color: #991b1b;
-        }
+/* "Бракує" — червоний овал */
+.tag-missing {
+    background: #A10404;   /* насичений червоний */
+    color: #ffffff;        /* білий текст */
+}
 
-        .tag-feature {
-            background: #faf3d7;
-            color: #92400e;
-        }
+/* Усі інші — молочно-сірі з чорним текстом */
+.tag-feature,
+.tag-spice {
+    background: #f3f4f6;   /* сіромолочний */
+    color: #111827;        /* майже чорний */
+}
 
-        .tag-spice {
-            background: #fef3c7;
-            color: #92400e;
-        }
 
         /* HEART ON CARD */
         .card-heart-btn {
@@ -1320,7 +1319,7 @@
 
                 let spiceHtml = '';
                 if (spiceText) {
-                    spiceHtml = `<span class="tag tag-spice">🌶 ${spiceText}</span>`;
+                    spiceHtml = `<span class="tag tag-spice"> ${spiceText}</span>`;
                 }
 
                 card.innerHTML = `
@@ -1444,7 +1443,7 @@
             });
             const sLabel = spiceLabel(r.spiciness);
             if (sLabel) {
-                mMetaTags.innerHTML += `<span class="tag tag-spice">🌶 ${sLabel}</span>`;
+                mMetaTags.innerHTML += `<span class="tag tag-spice"> ${sLabel}</span>`;
             }
 
             checkIfSavedInModal();
