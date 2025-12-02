@@ -1158,11 +1158,12 @@
 
                 <div id="mAuthor" class="author-row" style="display:none;"></div>
 
-                <div
-                    style="display:flex; flex-wrap:wrap; gap:20px; margin-bottom:10px; font-size:0.95rem; color:#4b5563;">
+                <div style="display:flex; flex-wrap:wrap; gap:20px; margin-bottom:10px; font-size:0.95rem; color:#4b5563;">
                     <span id="mTime"></span>
                     <span id="mCal"></span>
+                    <span id="mMacros"></span> <!-- тут будуть білки/жири/вуглеводи -->
                 </div>
+
 
                 <div id="mMetaTags" class="meta-tags-row" style="margin-bottom:25px;"></div>
 
@@ -1780,6 +1781,13 @@
             document.getElementById('mTitle').textContent = r.title || '';
             document.getElementById('mTime').textContent = `⏱ ${r.time_minutes || 0} хв`;
             document.getElementById('mCal').textContent = `${r.calories || 0} ккал`;
+             const macrosEl = document.getElementById('mMacros');
+            if (macrosEl) {
+                const p = r.protein ?? 0;
+                const f = r.fat ?? 0;
+                const c = r.carbs ?? 0;
+                macrosEl.textContent = `білки: ${p}г | жири: ${f}г | вуглеводи: ${c}г`;
+            }
 
             const gallery = document.getElementById('mGallery');
             gallery.innerHTML = '';
