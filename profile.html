@@ -641,21 +641,22 @@
 
 <body>
 
-    <header>
-        <nav class="nav">
-            <a href="index.html" class="logo">
-                <img src="img/logo.jpg" alt="FoodMatch logo" class="logo-icon">
-                <div>FoodMatch</div>
-            </a>
-            <div class="nav-links-center">
-                <a href="add-recipe.html">Додати рецепт</a>
-                <a href="shopping-list.html">Список покупок</a>
-            </div>
-            <div class="nav-actions">
-                <a href="index.html" class="nav-btn">На головну</a>
-            </div>
-        </nav>
-    </header>
+<header>
+    <nav class="nav">
+        <a href="index.html" class="logo">
+            <img src="img/logo.jpg" alt="FoodMatch logo" class="logo-icon">
+            <div>FoodMatch</div>
+        </a>
+        <div class="nav-links-center">
+            <a href="add-recipe.html">Додати рецепт</a>
+            <a href="shopping-list.html">Список покупок</a>
+        </div>
+        <div class="nav-actions">
+            <!-- додали id="topNavBtn" -->
+            <a href="index.html" class="nav-btn" id="topNavBtn">На головну</a>
+        </div>
+    </nav>
+</header>
 
     <div class="container">
 
@@ -874,6 +875,18 @@
                     isOwnProfile = true;
                 }
 
+                // 3.1. Оновлюємо кнопку в хедері
+                const topNavBtn = document.getElementById('topNavBtn');
+                if (topNavBtn) {
+                    if (isOwnProfile) {
+                        topNavBtn.textContent = 'На головну';
+                        topNavBtn.href = 'index.html';
+                    } else {
+                        topNavBtn.textContent = 'профіль';
+                        topNavBtn.href = 'profile.html'; // без id → свій профіль
+                    }
+                }
+
                 // 4) тягнемо профіль того, кого дивимось
                 const { data: profile } = await supabase
                     .from('profiles')
@@ -1015,17 +1028,17 @@
 
         // 5. СПИСКИ РЕЦЕПТІВ
        async function loadUserRecipes(uid) {
-            const { data: recipes } = await supabase
-                .from('recipes')
-                .select('*')
-                .eq('author_id', uid)
-                .order('created_at', { ascending: false });
+    const { data: recipes } = await supabase
+        .from('recipes')
+        .select('*')
+        .eq('author_id', uid)
+        .order('created_at', { ascending: false });
 
-            const container = document.getElementById('myRecipesGrid');
+    const container = document.getElementById('myRecipesGrid');
 
-            // isEditable = тільки якщо це наш власний профіль
-            renderRecipeList(recipes, container, isOwnProfile, false);
-        }
+    // isEditable = тільки якщо це наш власний профіль
+    renderRecipeList(recipes, container, isOwnProfile, false);
+}
 
 
         async function loadSavedRecipes(uid) {
