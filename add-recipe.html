@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Створити рецепт – FoodMatch</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Шрифт як на головній -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* --- БАЗОВІ СТИЛІ (як на головній) --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: url('img/background.jpg') center/cover no-repeat fixed;
+            color: #111827;
+            line-height: 1.5;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button {
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        /* HEADER – такий самий, як на index.html */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #e5e7eb;
+            height: 70px;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-weight: 800;
+            font-size: 1.4rem;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 8px;
+            flex-shrink: 0;
+        }
+
+        .nav-links-center {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links-center a {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #111827;
+        }
+
+        .nav-links-center a:hover {
+            color: #A10404;
+        }
+
+        .nav-links-center a.active {
+            color: #A10404;
+        }
+
+        .nav-btn {
+            border-radius: 999px;
+            background: #A10404;
+            border: 1px solid #A10404;
+            color: #fff;
+            padding: 8px 18px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            transition: 0.2s;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-1px);
+            background: #7c0303;
+            border-color: #7c0303;
+            box-shadow: 0 4px 12px rgba(161, 4, 4, 0.35);
+        }
+
+        /* FOCUS */
+        button:focus,
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #A10404 !important;
+            box-shadow: 0 0 0 1px rgba(161, 4, 4, 0.12);
+        }
+
+        /* LAYOUT СТОРІНКИ СТВОРЕННЯ */
+        .page-wrapper {
+            max-width: 900px;
+            margin: 30px auto 60px;
+            padding: 0 20px;
+        }
+
+        .page-title {
+            font-size: 1rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            color: #111827;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        /* CARD ФОРМИ – як панелі на головній */
+        .form-card {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 28px 24px 32px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+            border: 1px solid #e5e7eb;
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        .section-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #6b7280;
+            margin-bottom: 8px;
+            letter-spacing: 0.08em;
+        }
+
+        .section-subtitle {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #4b5563;
+            margin-bottom: 6px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 11px 14px;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            background: #f9fafb;
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: 0.2s;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* СТАРИЙ селект прихований (для форми і JS) */
+        #rCategory {
+            display: none;
+        }
+
+        /* КАСТОМНИЙ ДРОПДАУН ДЛЯ КАТЕГОРІЇ */
+        .select-wrapper {
+            position: relative;
+        }
+
+        .select-display {
+            width: 100%;
+            padding: 11px 14px;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            background: #f9fafb;
+            font-size: 0.95rem;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .select-display span {
+            pointer-events: none;
+        }
+
+        .select-arrow {
+            margin-left: 8px;
+            font-size: 0.7rem;
+            color: #6b7280;
+        }
+
+        .select-wrapper.open .select-display {
+            border-color: #A10404;
+            background: #fff;
+            box-shadow: 0 0 0 1px rgba(161, 4, 4, 0.08);
+        }
+
+        .select-dropdown {
+            position: absolute;
+            left: 0;
+            right: 0;
+            margin-top: 4px;
+            background: #ffffff;
+            border-radius: 14px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+            padding: 4px 0;
+            max-height: 220px;
+            overflow-y: auto;
+            display: none;
+            z-index: 20;
+        }
+
+        .select-wrapper.open .select-dropdown {
+            display: block;
+        }
+
+        .select-option {
+            padding: 8px 14px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .select-option:hover {
+            background: #fdf2f2;
+            color: #A10404;
+        }
+
+        .select-option.active {
+            background: #f3f4f6;
+            font-weight: 600;
+        }
+
+        /* ЗОНА ЗАВАНТАЖЕННЯ ФОТО */
+        .upload-area {
+            border-radius: 16px;
+            padding: 22px;
+            text-align: center;
+            border: 2px dashed #e5e7eb;
+            background: #f9fafb;
+            color: #6b7280;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+
+        .upload-area:hover {
+            border-color: #A10404;
+            background: #fdf2f2;
+            color: #7c0303;
+        }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .photo-item {
+            position: relative;
+            width: 100%;
+            height: 100px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+            background: #f9fafb;
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-remove {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.6);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .photo-remove:hover {
+            background: #ef4444;
+        }
+
+        .row-item {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr 40px;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .step-item {
+            display: grid;
+            grid-template-columns: 30px 1fr 40px;
+            gap: 8px;
+            margin-bottom: 8px;
+            align-items: flex-start;
+        }
+
+        .step-num {
+            font-weight: 800;
+            color: #A10404;
+            padding-top: 11px;
+            font-size: 0.95rem;
+        }
+
+        .btn-remove {
+            height: 42px;
+            background: #fee2e2;
+            color: #991b1b;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: 0.2s;
+        }
+
+        .btn-remove:hover {
+            background: #fecaca;
+        }
+
+        .btn-add {
+            width: 100%;
+            padding: 10px;
+            border-radius: 12px;
+            border: 1px dashed #d1d5db;
+            background: transparent;
+            color: #6b7280;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 6px;
+        }
+
+        .btn-add:hover {
+            border-color: #A10404;
+            color: #A10404;
+            background: #fdf2f2;
+        }
+
+        .two-cols {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin-bottom: 8px;
+        }
+
+        .time-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .time-input {
+            flex: 1;
+            text-align: center;
+        }
+
+        .time-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            background: #f9fafb;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #4b5563;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+
+        .time-btn:hover {
+            border-color: #A10404;
+            color: #A10404;
+            background: #fdf2f2;
+        }
+
+        .features-block {
+            padding-top: 10px;
+            border-top: 1px dashed #e5e7eb;
+        }
+
+        .features-row {
+            margin-bottom: 12px;
+        }
+
+        .pill-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .pill {
+            cursor: pointer;
+        }
+
+        .pill span {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 999px;
+            border: 1px solid #e5e7eb;
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            background: #f9fafb;
+            color: #4b5563;
+            transition: 0.15s;
+        }
+
+        .pill input {
+            display: none;
+        }
+
+        .pill input:checked+span {
+            border-color: #A10404;
+            background: #fdf2f2;
+            color: #A10404;
+        }
+
+        .kbzh-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .kbzh-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .kbzh-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #6b7280;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 16px;
+            margin-top: 28px;
+        }
+
+        .btn-cancel {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #6b7280;
+        }
+
+        .btn-cancel:hover {
+            color: #111827;
+        }
+
+        .btn-submit {
+            border-radius: 999px;
+            background: #A10404;
+            border: 1px solid #A10404;
+            color: #fff;
+            padding: 11px 26px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            transition: 0.2s;
+            box-shadow: 0 4px 12px rgba(161, 4, 4, 0.35);
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            transform: translateY(-1px);
+            background: #7c0303;
+            border-color: #7c0303;
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        @media (max-width: 900px) {
+            .nav-links-center {
+                display: none;
+            }
+
+            .page-wrapper {
+                margin-top: 20px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .row-item {
+                grid-template-columns: 1.2fr 0.8fr 36px;
+            }
+
+            .step-item {
+                grid-template-columns: 26px 1fr 36px;
+            }
+
+            .two-cols {
+                grid-template-columns: 1fr;
+            }
+
+            .kbzh-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav class="nav">
+            <a href="index.html" class="logo">
+                <img src="img/logo.jpg" alt="FoodMatch logo" class="logo-icon">
+                <div>FoodMatch</div>
+            </a>
+            <div class="nav-links-center">
+                <a href="add-recipe.html" class="active">Додати рецепт</a>
+                <a href="shopping-list.html">Список покупок</a>
+            </div>
+            <div class="nav-actions">
+                <a href="profile.html" class="nav-btn">профіль
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="page-wrapper">
+        <h1 class="page-title" id="pageTitle">
+            Новий рецепт
+        </h1>
+
+        <form class="form-card" onsubmit="publishRecipe(event)">
+            <div class="form-group">
+                <div class="section-label">Назва страви</div>
+                <input type="text" id="rTitle" placeholder="Наприклад: борщ з пампушками" required>
+            </div>
+
+            <div class="form-group">
+                <div class="section-label">Фото страви</div>
+                <div class="upload-area" onclick="document.getElementById('rFiles').click()">
+                    <p style="font-size:0.95rem; font-weight:500; margin-bottom:4px;">
+                        Додайте фото страви
+                    </p>
+                    <p style="font-size:0.85rem; color:#6b7280;">
+                        Можна завантажити одразу декілька фото
+                    </p>
+                    <input type="file" id="rFiles" hidden multiple accept="image/*" onchange="handleFileSelect(this)">
+                </div>
+                <div class="photo-grid" id="previewContainer"></div>
+            </div>
+
+            <div class="two-cols">
+                <div class="form-group" style="margin-bottom:0;">
+                    <div class="section-label">Категорія</div>
+
+                    <div class="select-wrapper" id="categorySelect">
+                        <button type="button" class="select-display">
+                            <span id="categoryLabel">Сніданок</span>
+                            <span class="select-arrow">▾</span>
+                        </button>
+                        <div class="select-dropdown">
+                            <div class="select-option active" data-value="breakfast">
+                                <span>Сніданок</span>
+                            </div>
+                            <div class="select-option" data-value="lunch">
+                                <span>Обід</span>
+                            </div>
+                            <div class="select-option" data-value="dinner">
+                                <span>Вечеря</span>
+                            </div>
+                            <div class="select-option" data-value="dessert">
+                                <span>Десерт</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <select id="rCategory">
+                        <option value="breakfast" selected>Сніданок</option>
+                        <option value="lunch">Обід</option>
+                        <option value="dinner">Вечеря</option>
+                        <option value="dessert">Десерт</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="margin-bottom:0;">
+                    <div class="section-label">Час приготування (хвилин)</div>
+                    <div class="time-control">
+                        <button type="button" class="time-btn" onclick="changeTime(-5)">−</button>
+                        <input type="number" id="rTime" class="time-input" placeholder="Наприклад: 40" required>
+                        <button type="button" class="time-btn" onclick="changeTime(5)">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ОСОБЛИВОСТІ РЕЦЕПТА -->
+            <div class="form-group">
+                <div class="section-label">Особливості страви</div>
+                <div class="features-block">
+                    <div class="features-row">
+                        <div class="section-subtitle">Гострота</div>
+                        <div class="pill-group">
+                            <label class="pill">
+                                <input type="radio" name="spice" value="none" checked>
+                                <span>Не гостре</span>
+                            </label>
+                            <label class="pill">
+                                <input type="radio" name="spice" value="medium">
+                                <span>Середньо гостре</span>
+                            </label>
+                            <label class="pill">
+                                <input type="radio" name="spice" value="hot">
+                                <span>Гостре</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="features-row">
+                        <div class="section-subtitle">Особливості</div>
+                        <div class="pill-group">
+                            <label class="pill">
+                                <input type="checkbox" id="fVegan">
+                                <span>Веганське</span>
+                            </label>
+                            <label class="pill">
+                                <input type="checkbox" id="fVegetarian">
+                                <span>Вегетаріанське</span>
+                            </label>
+                            <label class="pill">
+                                <input type="checkbox" id="fLactoseFree">
+                                <span>Без лактози</span>
+                            </label>
+                            <label class="pill">
+                                <input type="checkbox" id="fGlutenFree">
+                                <span>Без глютену</span>
+                            </label>
+                            <label class="pill">
+                                <input type="checkbox" id="fPescetarian">
+                                <span>Пескетаріанське</span>
+                            </label>
+                            <label class="pill">
+                                <input type="checkbox" id="fNutFree">
+                                <span>Без горіхів</span>
+                            </label>
+                            <label class="pill">
+                                <input type="checkbox" id="fCitrusFree">
+                                <span>Без цитрусових</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- КАЛОРІЇ + КБЖ -->
+            <div class="form-group">
+                <div class="section-label">Калорії та КБЖ (на порцію)</div>
+                <div class="kbzh-grid">
+                    <div class="kbzh-item">
+                        <label class="kbzh-label" for="rCalories">Ккал</label>
+                        <input type="number" id="rCalories" min="0" placeholder="320">
+                    </div>
+                    <div class="kbzh-item">
+                        <label class="kbzh-label" for="rProtein">Білки, г</label>
+                        <input type="number" id="rProtein" min="0" step="0.1" placeholder="18">
+                    </div>
+                    <div class="kbzh-item">
+                        <label class="kbzh-label" for="rFat">Жири, г</label>
+                        <input type="number" id="rFat" min="0" step="0.1" placeholder="24">
+                    </div>
+                    <div class="kbzh-item">
+                        <label class="kbzh-label" for="rCarbs">Вугл., г</label>
+                        <input type="number" id="rCarbs" min="0" step="0.1" placeholder="2">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="section-label">Інгредієнти</div>
+                <div id="ingredientsList">
+                    <div class="row-item">
+                        <input type="text" class="ing-name" placeholder="Назва" required>
+                        <input type="text" class="ing-amount" placeholder="Кількість" required>
+                        <button type="button" class="btn-remove" onclick="this.parentElement.remove()">×</button>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="btn-add" onclick="addIngredient()">+ Додати ще інгредієнт</button>
+
+            <div class="form-group">
+                <div class="section-label">Як готувати</div>
+                <div id="stepsList">
+                    <div class="step-item">
+                        <div class="step-num">1</div>
+                        <textarea class="step-desc" rows="2" placeholder="Опишіть перший крок..." required></textarea>
+                        <button type="button" class="btn-remove"
+                            onclick="this.parentElement.remove(); renumberSteps();">×</button>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="btn-add" onclick="addStep()">+ Додати наступний крок</button>
+
+            <div class="actions">
+                <a href="index.html" class="btn-cancel">Скасувати</a>
+                <button type="submit" class="btn-submit" id="submitBtn">Опублікувати рецепт</button>
+            </div>
+        </form>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/db.js"></script>
+
+    <script>
+        let currentUser = null;
+        let editRecipeId = null;
+        let existingPhotos = [];
+        let newFiles = [];
+
+        function initCategoryDropdown() {
+            const wrapper = document.getElementById('categorySelect');
+            if (!wrapper) return;
+
+            const displayBtn = wrapper.querySelector('.select-display');
+            const labelSpan = document.getElementById('categoryLabel');
+            const dropdown = wrapper.querySelector('.select-dropdown');
+            const options = dropdown.querySelectorAll('.select-option');
+            const hiddenSelect = document.getElementById('rCategory');
+
+            const labels = {
+                breakfast: 'Сніданок',
+                lunch: 'Обід',
+                dinner: 'Вечеря',
+                dessert: 'Десерт'
+            };
+
+            function setCategory(val) {
+                hiddenSelect.value = val;
+                labelSpan.textContent = labels[val] || 'Оберіть категорію';
+                options.forEach(opt => {
+                    opt.classList.toggle('active', opt.dataset.value === val);
+                });
+            }
+
+            setCategory(hiddenSelect.value || 'breakfast');
+
+            displayBtn.onclick = (e) => {
+                e.stopPropagation();
+                wrapper.classList.toggle('open');
+            };
+
+            options.forEach(opt => {
+                opt.onclick = (e) => {
+                    e.stopPropagation();
+                    const val = opt.dataset.value;
+                    setCategory(val);
+                    wrapper.classList.remove('open');
+                }
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!wrapper.contains(e.target)) {
+                    wrapper.classList.remove('open');
+                }
+            });
+
+            window.setCategoryFromOutside = setCategory;
+        }
+
+        function changeTime(delta) {
+            const input = document.getElementById('rTime');
+            let value = parseInt(input.value, 10);
+            if (isNaN(value)) value = 0;
+            value += delta;
+            if (value < 0) value = 0;
+            input.value = value || '';
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            initCategoryDropdown();
+
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                window.location.href = "login.html";
+                return;
+            }
+            currentUser = user;
+
+            const params = new URLSearchParams(window.location.search);
+            editRecipeId = params.get('id');
+
+            if (editRecipeId) {
+                await loadRecipeForEdit(editRecipeId);
+            } else {
+                document.getElementById('ingredientsList').innerHTML = '';
+                document.getElementById('stepsList').innerHTML = '';
+                addIngredient();
+                addStep();
+            }
+        });
+
+        async function loadRecipeForEdit(id) {
+            document.getElementById('pageTitle').textContent = "Редагувати рецепт";
+            document.getElementById('submitBtn').textContent = "Зберегти зміни";
+
+            const { data: recipe, error } = await supabase
+                .from('recipes')
+                .select('*')
+                .eq('id', id)
+                .single();
+
+            if (error) {
+                alert("Не вдалося завантажити рецепт: " + error.message);
+                return;
+            }
+
+            document.getElementById('rTitle').value = recipe.title;
+            document.getElementById('rCategory').value = recipe.category;
+            if (window.setCategoryFromOutside) {
+                window.setCategoryFromOutside(recipe.category);
+            }
+            document.getElementById('rTime').value = recipe.time_minutes;
+
+            if (document.getElementById('rCalories')) {
+                document.getElementById('rCalories').value = recipe.calories || '';
+            }
+            if (document.getElementById('rProtein')) {
+                document.getElementById('rProtein').value = recipe.protein || '';
+            }
+            if (document.getElementById('rFat')) {
+                document.getElementById('rFat').value = recipe.fat || '';
+            }
+            if (document.getElementById('rCarbs')) {
+                document.getElementById('rCarbs').value = recipe.carbs || '';
+            }
+
+            const spice = recipe.spiciness || 'none';
+            const spiceInput = document.querySelector(`input[name="spice"][value="${spice}"]`);
+            if (spiceInput) spiceInput.checked = true;
+
+            if (document.getElementById('fVegan')) {
+                document.getElementById('fVegan').checked = !!recipe.is_vegan;
+            }
+            if (document.getElementById('fVegetarian')) {
+                document.getElementById('fVegetarian').checked = !!recipe.is_vegetarian;
+            }
+            if (document.getElementById('fLactoseFree')) {
+                document.getElementById('fLactoseFree').checked = !!recipe.lactose_free;
+            }
+            if (document.getElementById('fGlutenFree')) {
+                document.getElementById('fGlutenFree').checked = !!recipe.is_gluten_free;
+            }
+            if (document.getElementById('fPescetarian')) {
+                document.getElementById('fPescetarian').checked = !!recipe.pescetarian;
+            }
+            if (document.getElementById('fNutFree')) {
+                document.getElementById('fNutFree').checked = !!recipe.nut_free;
+            }
+            if (document.getElementById('fCitrusFree')) {
+                document.getElementById('fCitrusFree').checked = !!recipe.citrus_free;
+            }
+
+            if (recipe.image_url && Array.isArray(recipe.image_url)) {
+                existingPhotos = recipe.image_url;
+                renderAllPhotos();
+            }
+
+            const ingList = document.getElementById('ingredientsList');
+            ingList.innerHTML = '';
+            if (recipe.ingredients && Array.isArray(recipe.ingredients)) {
+                recipe.ingredients.forEach(ing => addIngredient(ing.name, ing.amount));
+            } else {
+                addIngredient();
+            }
+
+            const stepList = document.getElementById('stepsList');
+            stepList.innerHTML = '';
+            if (recipe.steps && Array.isArray(recipe.steps)) {
+                recipe.steps.forEach(step => addStep(step));
+            } else {
+                addStep();
+            }
+        }
+
+        function handleFileSelect(input) {
+            const files = Array.from(input.files);
+            newFiles = [...newFiles, ...files];
+            renderAllPhotos();
+        }
+
+        function renderAllPhotos() {
+            const container = document.getElementById('previewContainer');
+            container.innerHTML = '';
+
+            existingPhotos.forEach((url, index) => {
+                const div = createPhotoElement(url, true, index);
+                container.appendChild(div);
+            });
+
+            newFiles.forEach((file, index) => {
+                const url = URL.createObjectURL(file);
+                const div = createPhotoElement(url, false, index);
+                container.appendChild(div);
+            });
+        }
+
+        function createPhotoElement(src, isExisting, index) {
+            const div = document.createElement('div');
+            div.className = 'photo-item';
+            div.innerHTML = `
+            <img src="${src}">
+            <div class="photo-remove" title="Видалити">×</div>
+        `;
+            div.querySelector('.photo-remove').onclick = () => {
+                if (isExisting) {
+                    existingPhotos.splice(index, 1);
+                } else {
+                    newFiles.splice(index, 1);
+                }
+                renderAllPhotos();
+            };
+            return div;
+        }
+
+        function addIngredient(nameVal = '', amountVal = '') {
+            const div = document.createElement('div');
+            div.className = 'row-item';
+            div.innerHTML = `
+            <input type="text" class="ing-name" placeholder="Назва" value="${nameVal}" required>
+            <input type="text" class="ing-amount" placeholder="Кількість" value="${amountVal}" required>
+            <button type="button" class="btn-remove" onclick="this.parentElement.remove()">×</button>
+        `;
+            document.getElementById('ingredientsList').appendChild(div);
+        }
+
+        function addStep(textVal = '') {
+            const list = document.getElementById('stepsList');
+            const stepNumber = list.children.length + 1;
+            const div = document.createElement('div');
+            div.className = 'step-item';
+            div.innerHTML = `
+            <div class="step-num">${stepNumber}</div>
+            <textarea class="step-desc" rows="2" placeholder="Опишіть крок..." required>${textVal}</textarea>
+            <button type="button" class="btn-remove" onclick="this.parentElement.remove(); renumberSteps();">×</button>
+        `;
+            list.appendChild(div);
+        }
+
+        function renumberSteps() {
+            const items = document.querySelectorAll('#stepsList .step-item .step-num');
+            items.forEach((el, idx) => el.textContent = idx + 1);
+        }
+
+        async function publishRecipe(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.textContent = "Завантаження...";
+
+            try {
+                let newPhotoUrls = [];
+                for (const file of newFiles) {
+                    const fileExt = file.name.split('.').pop();
+                    const fileName = `${currentUser.id}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}.${fileExt}`;
+
+                    const { error: uploadError } = await supabase.storage
+                        .from('RECIPE_PHOTOS')
+                        .upload(fileName, file);
+
+                    if (uploadError) throw uploadError;
+
+                    const { data } = supabase.storage.from('RECIPE_PHOTOS').getPublicUrl(fileName);
+                    newPhotoUrls.push(data.publicUrl);
+                }
+
+                const finalImages = [...existingPhotos, ...newPhotoUrls];
+
+                const ingredients = [];
+                document.querySelectorAll('.row-item').forEach(row => {
+                    const name = row.querySelector('.ing-name').value;
+                    const amount = row.querySelector('.ing-amount').value;
+                    if (name) ingredients.push({ name, amount });
+                });
+
+                const steps = [];
+                document.querySelectorAll('.step-desc').forEach(el => {
+                    if (el.value) steps.push(el.value);
+                });
+
+                const spiceInput = document.querySelector('input[name="spice"]:checked');
+                const spiceVal = spiceInput ? spiceInput.value : 'none';
+
+                const recipeData = {
+                    author_id: currentUser.id,
+                    title: document.getElementById('rTitle').value,
+                    image_url: finalImages,
+                    category: document.getElementById('rCategory').value,
+                    time_minutes: parseInt(document.getElementById('rTime').value) || 0,
+
+                    calories: parseInt(document.getElementById('rCalories').value) || 0,
+                    protein: parseFloat(document.getElementById('rProtein').value) || 0,
+                    fat: parseFloat(document.getElementById('rFat').value) || 0,
+                    carbs: parseFloat(document.getElementById('rCarbs').value) || 0,
+
+                    spiciness: spiceVal, // 'none' | 'medium' | 'hot'
+                    is_vegan: document.getElementById('fVegan').checked,
+                    is_vegetarian: document.getElementById('fVegetarian').checked,
+                    lactose_free: document.getElementById('fLactoseFree').checked,
+                    is_gluten_free: document.getElementById('fGlutenFree').checked,
+                    pescetarian: document.getElementById('fPescetarian').checked,
+                    nut_free: document.getElementById('fNutFree').checked,
+                    citrus_free: document.getElementById('fCitrusFree').checked,
+
+                    ingredients: ingredients,
+                    steps: steps
+                };
+
+                let result;
+                if (editRecipeId) {
+                    result = await supabase.from('recipes').update(recipeData).eq('id', editRecipeId);
+                } else {
+                    result = await supabase.from('recipes').insert([recipeData]);
+                }
+
+                if (result.error) throw result.error;
+
+                alert(editRecipeId ? "Рецепт оновлено!" : "Рецепт створено!");
+                window.location.href = "profile.html";
+
+            } catch (error) {
+                alert("Помилка: " + error.message);
+                btn.disabled = false;
+                btn.textContent = editRecipeId ? "Зберегти зміни" : "Опублікувати рецепт";
+            }
+        }
+    </script>
+</body>
+
+</html>

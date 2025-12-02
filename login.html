@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Вхід – FoodMatch</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Шрифт як на головній -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- БАЗОВІ СТИЛІ --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: url('img/background.jpg') center/cover no-repeat fixed;
+            color: #111827;
+            line-height: 1.5;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button {
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        /* HEADER – як на головній */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #e5e7eb;
+            height: 70px;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-weight: 800;
+            font-size: 1.4rem;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 8px;
+            flex-shrink: 0;
+        }
+
+        .nav-links-center {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links-center a {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #111827;
+        }
+
+        .nav-links-center a:hover {
+            color: #A10404;
+        }
+
+        .nav-links-center a.active {
+            color: #A10404;
+        }
+
+        .nav-btn {
+            border-radius: 999px;
+            background: #A10404;
+            border: 1px solid #A10404;
+            color: #fff;
+            padding: 8px 18px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            transition: 0.2s;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-1px);
+            background: #7c0303;
+            border-color: #7c0303;
+            box-shadow: 0 4px 12px rgba(161, 4, 4, 0.35);
+        }
+
+        /* FOCUS */
+        button:focus,
+        input:focus {
+            outline: none;
+            border-color: #A10404 !important;
+            box-shadow: 0 0 0 1px rgba(161, 4, 4, 0.12);
+        }
+
+        /* LAYOUT АВТОРИЗАЦІЇ */
+        .auth-layout {
+            min-height: calc(100vh - 70px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .auth-wrapper {
+            width: 100%;
+            max-width: 420px;
+        }
+
+        /* Верхній заголовок (ВХІД / РЕЄСТРАЦІЯ) – як “Новий рецепт” */
+        .auth-title {
+            font-size: 1rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            color: #111827;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .auth-card {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 26px 24px 28px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+            border: 1px solid #e5e7eb;
+        }
+
+        /* “З ПОВЕРНЕННЯМ” / “СТВОРИТИ АКАУНТ” – як “ШВИДКИЙ ДОСТУП” */
+        .quick-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #6b7280;
+            text-align: center;
+            margin-bottom: 18px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            background: #f9fafb;
+            outline: none;
+            transition: 0.15s;
+        }
+
+        .btn-primary {
+            width: 100%;
+            background: #A10404;
+            color: #fff;
+            padding: 11px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            border: 1px solid #A10404;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            cursor: pointer;
+            transition: 0.15s;
+            margin-top: 6px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            background: #7c0303;
+            border-color: #7c0303;
+            box-shadow: 0 4px 12px rgba(161, 4, 4, 0.35);
+        }
+
+        .auth-footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #6b7280;
+            border-top: 1px solid #f3f4f6;
+            padding-top: 16px;
+        }
+
+        .link {
+            color: #A10404;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 900px) {
+            .nav-links-center {
+                display: none;
+            }
+
+            .auth-layout {
+                padding: 24px 16px;
+            }
+
+            .auth-card {
+                padding: 22px 18px 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <nav class="nav">
+            <a href="index.html" class="logo">
+                <img src="img/logo.jpg" alt="FoodMatch logo" class="logo-icon">
+                <div>FoodMatch</div>
+            </a>
+            <div class="nav-links-center">
+                <a href="add-recipe.html">Додати рецепт</a>
+                <a href="shopping-list.html">Список покупок</a>
+            </div>
+            <div class="nav-actions">
+                <!-- кнопка "На головну" замість "Кабінет" -->
+                <a href="index.html" class="nav-btn">На головну</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="auth-layout">
+        <div class="auth-wrapper">
+            <div class="auth-title" id="authTitle">Вхід</div>
+
+            <div class="auth-card">
+                <!-- ФОРМА ВХОДУ -->
+                <div id="loginForm">
+                    <div class="quick-title">З поверненням</div>
+
+                    <form>
+                        <div class="form-group">
+                            <label for="loginEmail">Email</label>
+                            <input type="email" id="loginEmail" placeholder="name@email.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="loginPassword">Пароль</label>
+                            <input type="password" id="loginPassword" placeholder="••••••••" required>
+                        </div>
+                        <button type="button" id="btnLogin" class="btn-primary">Увійти</button>
+                    </form>
+
+                    <div class="auth-footer">
+                        Немає акаунту?
+                        <span class="link" onclick="toggleAuth()">Зареєструватися</span>
+                    </div>
+                </div>
+
+                <!-- ФОРМА РЕЄСТРАЦІЇ -->
+                <div id="registerForm" style="display: none;">
+                    <div class="quick-title">Створити акаунт</div>
+
+                    <form>
+                        <div class="form-group">
+                            <label for="regName">Імʼя</label>
+                            <input type="text" id="regName" placeholder="Як до вас звертатися?">
+                        </div>
+                        <div class="form-group">
+                            <label for="regEmail">Email</label>
+                            <input type="email" id="regEmail" placeholder="name@email.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="regPassword">Пароль</label>
+                            <input type="password" id="regPassword" placeholder="Придумайте пароль">
+                        </div>
+                        <button type="button" id="btnRegister" class="btn-primary">Зареєструватися</button>
+                    </form>
+
+                    <div class="auth-footer">
+                        Вже є акаунт?
+                        <span class="link" onclick="toggleAuth()">Увійти</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/db.js"></script>
+
+    <script>
+        // --- ПЕРЕВІРКА: ЧИ МИ ВЖЕ В СИСТЕМІ? ---
+        async function checkSession() {
+            const { data } = await supabase.auth.getSession();
+            if (data.session) {
+                window.location.href = "profile.html";
+            }
+        }
+        checkSession();
+
+        // Перемикач Вхід/Реєстрація
+        function toggleAuth() {
+            const loginBlock = document.getElementById('loginForm');
+            const registerBlock = document.getElementById('registerForm');
+            const authTitle = document.getElementById('authTitle');
+
+            if (loginBlock.style.display === 'none') {
+                loginBlock.style.display = 'block';
+                registerBlock.style.display = 'none';
+                document.title = "Вхід – FoodMatch";
+                authTitle.textContent = "Вхід";
+            } else {
+                loginBlock.style.display = 'none';
+                registerBlock.style.display = 'block';
+                document.title = "Реєстрація – FoodMatch";
+                authTitle.textContent = "Реєстрація";
+            }
+        }
+
+        // --- ЛОГІКА РЕЄСТРАЦІЇ ---
+        async function handleRegister() {
+            const name = document.getElementById('regName').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+
+            if (!email || !password) {
+                alert("Будь ласка, заповніть email та пароль");
+                return;
+            }
+
+            const { data, error } = await supabase.auth.signUp({
+                email: email,
+                password: password,
+                options: {
+                    data: { full_name: name }
+                }
+            });
+
+            if (error) {
+                alert("Помилка: " + error.message);
+            } else {
+                alert("Успіх! Акаунт створено. Тепер спробуйте увійти.");
+                toggleAuth();
+            }
+        }
+
+        // --- ЛОГІКА ВХОДУ ---
+        async function handleLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: email,
+                password: password,
+            });
+
+            if (error) {
+                alert("Помилка входу: " + error.message);
+            } else {
+                window.location.href = "profile.html";
+            }
+        }
+
+        // Прив'язуємо кнопки
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById('btnRegister').onclick = handleRegister;
+            document.getElementById('btnLogin').onclick = handleLogin;
+        });
+    </script>
+
+</body>
+
+</html>

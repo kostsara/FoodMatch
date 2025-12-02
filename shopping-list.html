@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Список покупок – FoodMatch</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Шрифт як на головній -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* --- БАЗОВІ СТИЛІ --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: url('img/background.jpg') center/cover no-repeat fixed;
+            color: #111827;
+            line-height: 1.5;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button {
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        .page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* HEADER – як на головній */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #e5e7eb;
+            height: 70px;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-weight: 800;
+            font-size: 1.4rem;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 8px;
+            flex-shrink: 0;
+        }
+
+        .nav-links-center {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links-center a {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #111827;
+        }
+
+        .nav-links-center a:hover {
+            color: #A10404;
+        }
+
+        .nav-links-center a.active {
+            color: #A10404;
+        }
+
+        .nav-btn {
+            border-radius: 999px;
+            background: #A10404;
+            border: 1px solid #A10404;
+            color: #fff;
+            padding: 8px 18px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            transition: 0.2s;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-1px);
+            background: #7c0303;
+            border-color: #7c0303;
+            box-shadow: 0 4px 12px rgba(161, 4, 4, 0.35);
+        }
+
+        /* FOCUS */
+        button:focus,
+        input:focus {
+            outline: none;
+            border-color: #A10404 !important;
+            box-shadow: 0 0 0 1px rgba(161, 4, 4, 0.12);
+        }
+
+        /* LAYOUT – вужче */
+        .page-wrapper {
+            max-width: 900px;
+            margin: 30px auto 60px;
+            padding: 0 20px;
+        }
+
+        .page-title {
+            font-size: 1rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            color: #111827;
+            text-align: center;
+            margin-bottom: 18px;
+        }
+
+        .shopping-panel {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 24px 22px 26px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+            border: 1px solid #e5e7eb;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .section-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #6b7280;
+            letter-spacing: 0.08em;
+        }
+
+        .clear-btn {
+            background: none;
+            border: none;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #A10404;
+            cursor: pointer;
+        }
+
+        .clear-btn:hover {
+            opacity: 0.8;
+        }
+
+        /* ADD ITEM – назва + кількість + категорія-пігулки */
+        .add-box {
+            background: #f9fafb;
+            padding: 12px;
+            border-radius: 16px;
+            border: 1px solid #e5e7eb;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 22px;
+        }
+
+        .add-top-row {
+            display: grid;
+            grid-template-columns: 2fr 1.1fr auto;
+            gap: 8px;
+        }
+
+        .add-input {
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            padding: 8px 10px;
+            font-size: 0.95rem;
+            background: #ffffff;
+            outline: none;
+            width: 100%;
+        }
+
+        .add-input::placeholder {
+            color: #9ca3af;
+        }
+
+        .add-btn {
+            background: #A10404;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+
+        .add-btn:hover {
+            background: #7c0303;
+        }
+
+        .cat-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .cat-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .cat-pill-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .cat-pill {
+            border-radius: 999px;
+            border: 1px solid #e5e7eb;
+            padding: 6px 10px;
+            font-size: 0.8rem;
+            background: #ffffff;
+            cursor: pointer;
+            transition: 0.15s;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .cat-pill:hover {
+            border-color: #A10404;
+            color: #A10404;
+            background: #fef2f2;
+        }
+
+        .cat-pill.active {
+            border-color: #A10404;
+            background: #A10404;
+            color: #ffffff;
+        }
+
+        /* GRID КАТЕГОРІЙ */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 18px;
+        }
+
+        .category-section {
+            margin-bottom: 0;
+        }
+
+        .cat-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #9ca3af;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            letter-spacing: 0.08em;
+            padding-left: 4px;
+        }
+
+        .shopping-card {
+            background: white;
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+            min-height: 46px;
+        }
+
+        .shop-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 14px;
+            border-bottom: 1px solid #f3f4f6;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+
+        .shop-item:last-child {
+            border-bottom: none;
+        }
+
+        .shop-item:hover {
+            background: #f9fafb;
+        }
+
+        .check-circle {
+            width: 22px;
+            height: 22px;
+            border: 2px solid #d1d5db;
+            border-radius: 50%;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .item-text {
+            flex: 1;
+            font-size: 0.95rem;
+            color: #111827;
+            transition: 0.2s;
+        }
+
+        .item-qty {
+            font-size: 0.8rem;
+            color: #6b7280;
+            font-weight: 500;
+            background: #f3f4f6;
+            padding: 2px 8px;
+            border-radius: 999px;
+            margin-left: 8px;
+            white-space: nowrap;
+        }
+
+        /* Checked State */
+        .shop-item.checked .check-circle {
+            background: #22c55e;
+            border-color: #22c55e;
+        }
+
+        .shop-item.checked .check-circle::after {
+            content: '✓';
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .shop-item.checked .item-text {
+            text-decoration: line-through;
+            color: #9ca3af;
+        }
+
+        .shop-item.checked .item-qty {
+            opacity: 0.5;
+        }
+
+        @media (max-width: 900px) {
+            .nav-links-center {
+                display: none;
+            }
+
+            .page-wrapper {
+                margin-top: 20px;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .add-top-row {
+                grid-template-columns: 1.7fr 1.1fr auto;
+            }
+        }
+
+        @media (max-width: 560px) {
+            .add-top-row {
+                grid-template-columns: 1fr;
+            }
+
+            .add-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page">
+        <header>
+            <nav class="nav">
+                <a href="index.html" class="logo">
+                    <img src="img/logo.jpg" alt="FoodMatch logo" class="logo-icon">
+                    <div>FoodMatch</div>
+                </a>
+                <div class="nav-links-center">
+                    <a href="add-recipe.html">Додати рецепт</a>
+                    <a href="shopping-list.html" class="active">Список покупок</a>
+                </div>
+                <div class="nav-actions">
+                    <a href="profile.html" class="nav-btn">профіль</a>
+                </div>
+            </nav>
+        </header>
+
+        <main class="page-wrapper">
+            <h1 class="page-title">Список покупок</h1>
+
+            <section class="shopping-panel">
+                <div class="panel-header">
+                    <div class="section-label">Мій кошик</div>
+                    <button class="clear-btn" onclick="clearChecked()">Очистити куплене</button>
+                </div>
+
+                <!-- Додавання продукту -->
+                <div class="add-box">
+                    <div class="add-top-row">
+                        <input type="text" class="add-input" id="newItemName"
+                            placeholder="Що купити? Наприклад: молоко, картопля, курка...">
+                        <input type="text" class="add-input" id="newItemQty"
+                            placeholder="Кількість: 2 л, 1 кг, 5 шт...">
+                        <button class="add-btn" onclick="addNewItem()">+</button>
+                    </div>
+
+                    <div class="cat-row">
+                        <span class="cat-label">Категорія:</span>
+                        <div class="cat-pill-row">
+                            <button type="button" class="cat-pill" data-cat="veg">Овочі та фрукти</button>
+                            <button type="button" class="cat-pill" data-cat="milk">Молочні</button>
+                            <button type="button" class="cat-pill" data-cat="meat">Мʼясо та риба</button>
+                            <button type="button" class="cat-pill" data-cat="grain">Крупи та хліб</button>
+                            <button type="button" class="cat-pill" data-cat="spice">Соуси та спеції</button>
+                            <button type="button" class="cat-pill" data-cat="other">Інше</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- КАТЕГОРІЇ – завжди видно -->
+                <div id="listContainer">
+                    <div class="categories-grid">
+                        <div class="category-section">
+                            <div class="cat-title">Овочі та фрукти</div>
+                            <div class="shopping-card" id="catVeg"></div>
+                        </div>
+
+                        <div class="category-section">
+                            <div class="cat-title">Молочні продукти</div>
+                            <div class="shopping-card" id="catMilk"></div>
+                        </div>
+
+                        <div class="category-section">
+                            <div class="cat-title">Мʼясо та риба</div>
+                            <div class="shopping-card" id="catMeat"></div>
+                        </div>
+
+                        <div class="category-section">
+                            <div class="cat-title">Крупи та хліб</div>
+                            <div class="shopping-card" id="catGrain"></div>
+                        </div>
+
+                        <div class="category-section">
+                            <div class="cat-title">Соуси та спеції</div>
+                            <div class="shopping-card" id="catSpice"></div>
+                        </div>
+
+                        <div class="category-section">
+                            <div class="cat-title">Інше</div>
+                            <div class="shopping-card" id="catOther"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // ======= СТАН + LOCALSTORAGE =======
+        const STORAGE_KEY = 'foodmatch_shopping_list_v1';
+        let items = []; // {id, name, qty, cat, checked}
+
+        let currentCategory = 'other';
+
+        const categoryMap = {
+            veg: 'catVeg',
+            milk: 'catMilk',
+            meat: 'catMeat',
+            grain: 'catGrain',
+            spice: 'catSpice',
+            other: 'catOther'
+        };
+
+        const catPills = document.querySelectorAll('.cat-pill');
+        const nameInput = document.getElementById('newItemName');
+        const qtyInput = document.getElementById('newItemQty');
+
+        function saveList() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+        }
+
+        function loadList() {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (!raw) {
+                items = [];
+                renderList();
+                return;
+            }
+            try {
+                const parsed = JSON.parse(raw);
+                if (Array.isArray(parsed)) {
+                    items = parsed;
+                } else {
+                    items = [];
+                }
+            } catch {
+                items = [];
+            }
+            renderList();
+        }
+
+        function renderList() {
+            // очищаємо всі категорії
+            Object.values(categoryMap).forEach(id => {
+                const box = document.getElementById(id);
+                if (box) box.innerHTML = '';
+            });
+
+            // рендеримо товари
+            items.forEach(item => {
+                const containerId = categoryMap[item.cat] || categoryMap.other;
+                const list = document.getElementById(containerId);
+                if (!list) return;
+
+                const div = document.createElement('div');
+                div.className = 'shop-item' + (item.checked ? ' checked' : '');
+                div.dataset.id = item.id;
+                div.onclick = function () { toggleCheckById(item.id); };
+
+                div.innerHTML = `
+                <div class="check-circle"></div>
+                <span class="item-text">${item.name}</span>
+                <span class="item-qty">${item.qty}</span>
+            `;
+                // додаємо на початок
+                list.insertBefore(div, list.firstChild);
+            });
+        }
+
+        // ======= ВИЗНАЧЕННЯ КАТЕГОРІЇ =======
+        function setActiveCategory(cat) {
+            currentCategory = cat;
+            catPills.forEach(pill => {
+                pill.classList.toggle('active', pill.dataset.cat === cat);
+            });
+        }
+
+        function detectCategory(name) {
+            const n = name.toLowerCase();
+
+            if (!n) return 'other';
+
+            const vegKeys = ['картоп', 'моркв', 'цибул', 'яблук', 'яблу', 'огір', 'помід', 'томат', 'лимон', 'банан', 'капуст', 'перець', 'буряк', 'буря'];
+            if (vegKeys.some(k => n.includes(k))) return 'veg';
+
+            const milkKeys = ['молок', 'сметан', 'масло', 'йогурт', 'сир', 'вершк', 'кефір', 'ряжан', 'бринз'];
+            if (milkKeys.some(k => n.includes(k))) return 'milk';
+
+            const meatKeys = ['курк', 'філе', 'свинин', 'ялович', 'фарш', 'бекон', 'ковбас', 'риб', 'лосось', 'тунец', 'тунець'];
+            if (meatKeys.some(k => n.includes(k))) return 'meat';
+
+            const grainKeys = ['рис', 'гречк', 'гречан', 'макарон', 'борошн', 'манк', 'вівсян', 'хліб', 'булк'];
+            if (grainKeys.some(k => n.includes(k))) return 'grain';
+
+            const spiceKeys = ['олія', 'соус', 'кетчуп', 'майонез', 'спеці', 'сіль', 'цукор', 'перець', 'припра'];
+            if (spiceKeys.some(k => n.includes(k))) return 'spice';
+
+            return 'other';
+        }
+
+        // клік по пігулці
+        catPills.forEach(pill => {
+            pill.addEventListener('click', () => {
+                setActiveCategory(pill.dataset.cat);
+            });
+        });
+
+        // авто-категорія при вводі
+        nameInput.addEventListener('input', () => {
+            const autoCat = detectCategory(nameInput.value);
+            setActiveCategory(autoCat);
+        });
+
+        // стартово
+        setActiveCategory('other');
+
+        // ======= ОПЕРАЦІЇ ЗІ СПИСКОМ =======
+        function addNewItem() {
+            const name = nameInput.value.trim();
+            const qty = (qtyInput.value.trim() || '1 шт');
+
+            if (!name) return;
+
+            const item = {
+                id: Date.now().toString(36) + Math.random().toString(36).slice(2),
+                name,
+                qty,
+                cat: currentCategory || 'other',
+                checked: false
+            };
+
+            // додаємо на початок
+            items.unshift(item);
+            saveList();
+            renderList();
+
+            nameInput.value = "";
+            qtyInput.value = "";
+            setActiveCategory('other');
+        }
+
+        function toggleCheckById(id) {
+            const idx = items.findIndex(i => i.id === id);
+            if (idx === -1) return;
+            items[idx].checked = !items[idx].checked;
+            saveList();
+            renderList();
+        }
+
+        function clearChecked() {
+            const anyChecked = items.some(i => i.checked);
+            if (!anyChecked) {
+                alert("Спочатку відмітьте куплені товари!");
+                return;
+            }
+            if (!confirm("Видалити всі куплені товари зі списку?")) return;
+            items = items.filter(i => !i.checked);
+            saveList();
+            renderList();
+        }
+
+        // Enter для додавання
+        nameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addNewItem();
+            }
+        });
+        qtyInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addNewItem();
+            }
+        });
+
+        // Завантаження при відкритті сторінки
+        document.addEventListener('DOMContentLoaded', loadList);
+    </script>
+
+</body>
+
+</html>

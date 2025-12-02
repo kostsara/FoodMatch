@@ -1,0 +1,1874 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>FoodMatch – Головна</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/chat.css">
+    <style>
+        /* --- БАЗОВІ СТИЛІ --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: url('img/background.jpg') center/cover no-repeat fixed;
+            color: #111827;
+            line-height: 1.5;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button {
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        /* HEADER */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #e5e7eb;
+            height: 70px;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-weight: 800;
+            font-size: 1.4rem;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 8px;
+            flex-shrink: 0;
+        }
+
+        .nav-links-center {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links-center a {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #111827;
+        }
+
+        .nav-links-center a:hover {
+            color: #A10404;
+        }
+
+        .nav-btn {
+            border-radius: 999px;
+            background: #A10404;
+            border: 1px solid #A10404;
+            color: #fff;
+            padding: 8px 18px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            transition: 0.2s;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-1px);
+            background: #7c0303;
+            border-color: #7c0303;
+            box-shadow: 0 4px 12px rgba(161, 4, 4, 0.35);
+        }
+
+        /* FOCUS СТИЛІ */
+        button:focus,
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #A10404 !important;
+            box-shadow: 0 0 0 1px rgba(161, 4, 4, 0.12);
+        }
+
+        /* LAYOUT */
+        .layout {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px 60px;
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        /* HERO (ПОШУК) */
+        .hero {
+            grid-column: 1 / -1;
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 18px 22px;
+            border: 1px solid #e5e7eb;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 720px;
+        }
+
+        .hero h1 {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #111827;
+        }
+
+        .hero h1 span {
+            color: #A10404;
+        }
+
+        .main-search-wrapper {
+            position: relative;
+            max-width: 600px;
+        }
+
+        .main-search-input {
+            width: 100%;
+            padding: 11px 14px;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            font-size: 0.95rem;
+            outline: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+            transition: 0.2s;
+            background: #ffffff;
+        }
+
+        .main-search-input:focus {
+            border-color: #A10404;
+            box-shadow: 0 4px 20px rgba(161, 4, 4, 0.15);
+        }
+
+        @media (max-width: 900px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-links-center {
+                display: none;
+            }
+
+            .hero {
+                max-width: 100%;
+            }
+        }
+
+        /* SIDEBAR & RESULTS */
+        .sidebar,
+        .results {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+            border: 1px solid #e5e7eb;
+        }
+
+        .section-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #6b7280;
+            margin-bottom: 10px;
+            letter-spacing: 0.08em;
+        }
+
+        .section-label-main {
+            color: #111827;
+        }
+
+        .section-label-sub {
+            font-size: 0.75rem;
+            margin-bottom: 8px;
+        }
+
+        /* Список типів страв — вертикально */
+        .meal-type-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .meal-type-btn {
+            border: none;
+            background: transparent;
+            padding: 4px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-align: left;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .meal-type-icon {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .meal-type-btn:hover span {
+            color: #A10404;
+        }
+
+        .meal-type-btn.active span {
+            color: #A10404;
+        }
+
+        .filter-block {
+            margin-bottom: 18px;
+        }
+
+        .pill-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .pill-btn {
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            padding: 8px 14px;
+            font-size: 0.9rem;
+            background: #fff;
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .pill-btn:hover {
+            background: #f9fafb;
+            border-color: #A10404;
+            color: #A10404;
+        }
+
+        .pill-btn.active {
+            background: #A10404;
+            color: #fff;
+            border-color: #A10404;
+        }
+
+        .menu-btn {
+            width: 100%;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 8px;
+            color: #374151;
+            border-color: #A10404;
+        }
+
+        .menu-btn:hover {
+            background: #fdf2f2;
+            color: #A10404;
+            border-color: #A10404;
+        }
+
+        .ingredient-input-wrapper {
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        #ingInput,
+        #allergyInput {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            font-size: 0.9rem;
+            outline: none;
+            background: #f9fafb;
+        }
+
+        #ingInput::placeholder,
+        #allergyInput::placeholder {
+            text-transform: none;
+        }
+
+        #ingInput:focus,
+        #allergyInput:focus {
+            border-color: #A10404;
+            background: #fff;
+        }
+
+        .suggestions-box {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .suggestion-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .suggestion-item:hover {
+            background: #fdf2f2;
+            color: #A10404;
+        }
+
+        .selected-tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+            min-height: 10px;
+        }
+
+        .ing-tag {
+            background: #A10404;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            animation: popIn 0.2s ease;
+        }
+
+        .ing-tag span {
+            cursor: pointer;
+            font-weight: bold;
+            opacity: 0.7;
+            padding-left: 4px;
+        }
+
+        @keyframes popIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .quick-add-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .divider {
+            height: 1px;
+            background: #e5e7eb;
+            margin: 25px 0;
+        }
+
+        .reset-link {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: #A10404;
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 0;
+        }
+
+        .reset-link:hover {
+            opacity: 0.8;
+        }
+
+        .missing-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #4b5563;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        #missingLabel {
+            color: #A10404;
+        }
+
+        #missingRange {
+            width: 100%;
+            background: transparent;
+        }
+
+        #missingRange::-webkit-slider-runnable-track {
+            height: 4px;
+            border-radius: 999px;
+            background: #A10404;
+        }
+
+        #missingRange::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #A10404;
+            border: 2px solid #ffffff;
+            margin-top: -6px;
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05);
+        }
+
+        #missingRange:focus::-webkit-slider-runnable-track {
+            background: #e5e7eb;
+        }
+
+        #missingRange::-moz-range-track {
+            height: 4px;
+            border-radius: 999px;
+            background: #e5e7eb;
+        }
+
+        #missingRange::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #A10404;
+            border: 2px solid #ffffff;
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05);
+        }
+
+        .missing-note {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-top: 6px;
+            line-height: 1.4;
+        }
+
+        /* RECIPE CARDS */
+        .recipes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .recipe-card {
+            border-radius: 20px;
+            border: 1px solid #e5e7eb;
+            background: #fff;
+            overflow: hidden;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .recipe-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .recipe-card:active,
+        .recipe-card:focus-within {
+            border-color: #A10404;
+            box-shadow: 0 0 0 1px rgba(161, 4, 4, 0.3);
+        }
+
+        .recipe-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .card-content {
+            padding: 16px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .recipe-title {
+            font-weight: 700;
+            font-size: 1.05rem;
+            line-height: 1.3;
+        }
+
+        .recipe-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+
+        .meta-tags-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 6px;
+        }
+
+        .tag {
+            border-radius: 99px;
+            padding: 4px 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: #e5e7eb;
+            display: inline-block;
+        }
+
+        .tag-good {
+    background: #dcfce7;
+    color: #166534;
+}
+
+/* "Бракує" — червоний овал */
+.tag-missing {
+    background: #A10404;   /* насичений червоний */
+    color: #ffffff;        /* білий текст */
+}
+
+/* Усі інші — молочно-сірі з чорним текстом */
+.tag-feature,
+.tag-spice {
+    background: #f3f4f6;   /* сіромолочний */
+    color: #111827;        /* майже чорний */
+}
+
+
+        /* HEART ON CARD */
+        .card-heart-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 5;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #e5e7eb;
+            color: #d1d5db;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+
+        .card-heart-btn:hover {
+            transform: scale(1.1);
+            background: white;
+        }
+
+        .card-heart-btn.saved {
+            color: #A10404;
+            border-color: #A10404;
+            background: #fdf2f2;
+        }
+
+        /* RESULTS HEADER */
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .res-count {
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: #A10404;
+            color: #ffffff;
+            padding: 4px 10px;
+            border-radius: 999px;
+        }
+
+        /* MODAL */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-backdrop.show {
+            display: flex;
+        }
+
+        .modal {
+            background: #fff;
+            border-radius: 24px;
+            width: 90%;
+            max-width: 650px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+        }
+
+        .btn-heart {
+            background: #f3f4f6;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #d1d5db;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-heart:hover,
+        .btn-heart.saved {
+            background: #fdf2f2;
+            color: #A10404;
+        }
+
+        .modal-body {
+            padding: 24px;
+            overflow-y: auto;
+        }
+
+        /* GALLERY */
+        .gallery-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            margin-bottom: 20px;
+            border-radius: 16px;
+            overflow: hidden;
+            background: #ffffff;
+        }
+
+        .modal-gallery {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            scrollbar-width: none;
+        }
+
+        .modal-gallery::-webkit-scrollbar {
+            display: none;
+        }
+
+        .modal-gallery img {
+            min-width: 100%;
+            height: 100%;
+            object-fit: contain;
+            scroll-snap-align: start;
+            background: #ffffff;
+        }
+
+        .gallery-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(5px);
+            color: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            transition: 0.2s;
+        }
+
+        .g-prev {
+            left: 10px;
+        }
+
+        .g-next {
+            right: 10px;
+        }
+
+        /* AUTHOR */
+        .author-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding: 12px;
+            background: #f9fafb;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .author-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: block;
+        }
+
+        .author-info {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.3;
+        }
+
+        .author-label {
+            font-size: 0.75rem;
+            color: #6b7280;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .author-link {
+            font-weight: 700;
+            color: #111827;
+            font-size: 0.95rem;
+        }
+
+        .author-link:hover {
+            color: #A10404;
+            text-decoration: underline;
+        }
+
+        /* REVIEWS */
+        .reviews-section {
+            margin-top: 30px;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 20px;
+        }
+
+        .review-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 12px;
+        }
+
+        .review-form textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            resize: none;
+            font-family: inherit;
+        }
+
+        .star-rating {
+            display: flex;
+            gap: 5px;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #e5e7eb;
+        }
+
+        .star-rating span:hover,
+        .star-rating span.active {
+            color: #fbbf24;
+        }
+
+        .review-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #e5e7eb;
+        }
+
+        .review-author {
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .review-text {
+            font-size: 0.9rem;
+            color: #4b5563;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page">
+        <header>
+            <nav class="nav">
+                <a href="index.html" class="logo">
+                    <img src="img/logo.jpg" alt="FoodMatch logo" class="logo-icon">
+                    <div>FoodMatch</div>
+                </a>
+                <div class="nav-links-center">
+                    <a href="add-recipe.html">ДОДАТИ РЕЦЕПТ</a>
+                    <a href="shopping-list.html">СПИСОК ПОКУПОК</a>
+                </div>
+                <div class="nav-actions">
+                    <a href="profile.html" class="nav-btn">профіль</a>
+                </div>
+            </nav>
+        </header>
+
+        <main>
+            <section class="layout">
+                <div class="hero">
+                    <h1>Знайди рецепт з того, <span>що є вдома</span></h1>
+                    <div class="main-search-wrapper">
+                        <input type="text" id="recipeSearch" class="main-search-input"
+                            placeholder="Пошук за назвою (наприклад: сирники, борщ)...">
+                    </div>
+                </div>
+
+                <aside class="sidebar">
+                    <div class="section-label">Швидкий доступ</div>
+                    <div class="pill-row" style="flex-direction: column;">
+                        <a href="add-recipe.html" class="pill-btn menu-btn">Додати свій рецепт</a>
+                        <a href="shopping-list.html" class="pill-btn menu-btn">Мій список покупок</a>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="meal-type-list" id="mealTypeRow">
+                        <button class="meal-type-btn active" data-type="all">
+                            <span class="meal-type-icon-wrap">
+                                <img src="img/all.jpg" alt="" class="meal-type-icon">
+                            </span>
+                            <span>Усі</span>
+                        </button>
+
+                        <button class="meal-type-btn" data-type="breakfast">
+                            <span class="meal-type-icon-wrap">
+                                <img src="img/breakfast.jpg" alt="" class="meal-type-icon">
+                            </span>
+                            <span>Сніданок</span>
+                        </button>
+
+                        <button class="meal-type-btn" data-type="lunch">
+                            <span class="meal-type-icon-wrap">
+                                <img src="img/lunch.jpg" alt="" class="meal-type-icon">
+                            </span>
+                            <span>Обід</span>
+                        </button>
+
+                        <button class="meal-type-btn" data-type="dinner">
+                            <span class="meal-type-icon-wrap">
+                                <img src="img/dinner.jpg" alt="" class="meal-type-icon">
+                            </span>
+                            <span>Вечеря</span>
+                        </button>
+
+                        <button class="meal-type-btn" data-type="dessert">
+                            <span class="meal-type-icon-wrap">
+                                <img src="img/dessert.jpg" alt="" class="meal-type-icon">
+                            </span>
+                            <span>Десерт</span>
+                        </button>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="section-label">Особливості</div>
+                    <div class="pill-row" id="featuresRow">
+                        <button class="pill-btn" data-feature="is_vegan">Веганське</button>
+                        <button class="pill-btn" data-feature="is_vegetarian">Вегетаріанське</button>
+                        <button class="pill-btn" data-feature="lactose_free">Без лактози</button>
+                        <button class="pill-btn" data-feature="is_gluten_free">Без глютену</button>
+                        <button class="pill-btn" data-feature="pescetarian">Пескетаріанське</button>
+                        <button class="pill-btn" data-feature="nut_free">Без горіхів</button>
+                        <button class="pill-btn" data-feature="citrus_free">Без цитрусових</button>
+
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="section-label">Гострота</div>
+                    <div class="pill-row" id="spiceRow">
+                        <button class="pill-btn" data-spice="none">Не гостре</button>
+                        <button class="pill-btn" data-spice="medium">Середньо гостре</button>
+                        <button class="pill-btn" data-spice="hot">Гостре</button>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="filter-block">
+                        <div class="section-label">Що є в холодильнику?</div>
+                        <div class="ingredient-input-wrapper">
+                            <input type="text" id="ingInput" placeholder="Введіть продукт (наприклад: курка)...">
+                            <div id="suggestionsBox" class="suggestions-box"></div>
+                        </div>
+                        <div id="selectedTags" class="selected-tags-container"></div>
+                        <div style="margin-bottom:15px; text-align:left;">
+                            <button onclick="clearTags()" class="reset-link">Скинути все</button>
+                        </div>
+                    </div>
+                    
+
+                    <div class="filter-block">
+                        <div class="section-label section-label-sub">Часто додають</div>
+                        <div class="pill-row quick-add-row">
+                            <button class="pill-btn" onclick="addTag('Яйця')">Яйця</button>
+                            <button class="pill-btn" onclick="addTag('Олія')">Олія</button>
+                            <button class="pill-btn" onclick="addTag('Картопля')">Картопля</button>
+                            <button class="pill-btn" onclick="addTag('Сіль')">Сіль</button>
+                            <button class="pill-btn" onclick="addTag('Молоко')">Молоко</button>
+                        </div>
+                    </div>
+
+                    <div class="divider"></div>
+
+
+                    <div class="missing-header">
+                        <span>Допустимо відсутніх:</span>
+                        <strong id="missingLabel">5</strong>
+                    </div>
+                    <input id="missingRange" type="range" min="0" max="5" value="5">
+                    <div class="missing-note">
+                        0 — всі інгредієнти за списком<br>
+                        1–4 — скільки може бракувати<br>
+                        5 — не враховувати відсутні
+                    </div>
+
+                    <div style="margin-top:25px; text-align:left;">
+                        <button class="reset-link" onclick="clearAllFilters()">Скинути всі фільтри</button>
+                    </div>
+
+                </aside>
+
+                <section class="results">
+                    <div class="results-header">
+                        <h2 class="section-label section-label-main">Знайдені рецепти</h2>
+                        <span id="resCount" class="res-count">0</span>
+                    </div>
+                    <div id="recipesContainer" class="recipes-grid">
+                        <p style="color:#666; grid-column:1/-1; text-align:center; padding:40px;">Завантаження
+                            рецептів...</p>
+                    </div>
+                </section>
+            </section>
+        </main>
+    </div>
+
+    <div class="modal-backdrop" id="recipeModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div style="display:flex; align-items:center; gap:15px; flex:1;">
+                    <div class="modal-title" id="mTitle"></div>
+                    <button id="btnSaveModal" class="btn-heart" title="Зберегти">♥</button>
+                </div>
+                <button onclick="closeModal()"
+                    style="border:none; background:none; font-size:2rem; color:#9ca3af; cursor:pointer;">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="gallery-container" id="galleryContainer">
+                    <button class="gallery-btn g-prev" id="btnPrev" onclick="scrollGallery(-1)">&#10094;</button>
+                    <button class="gallery-btn g-next" id="btnNext" onclick="scrollGallery(1)">&#10095;</button>
+                    <div id="mGallery" class="modal-gallery"></div>
+                </div>
+
+                <div id="mAuthor" class="author-row" style="display:none;"></div>
+
+                <div style="display:flex; flex-wrap:wrap; gap:20px; margin-bottom:10px; font-size:0.95rem; color:#4b5563;">
+                    <span id="mTime"></span>
+                    <span id="mCal"></span>
+                    <span id="mMacros"></span> <!-- тут будуть БЖВ -->
+                </div>
+
+
+
+                <!-- Теги особливостей та гостроти в модалці -->
+                <div id="mMetaTags" class="meta-tags-row" style="margin-bottom:25px;"></div>
+
+                <h3 style="font-size:1.1rem; margin-bottom:15px;">Інгредієнти</h3>
+                <ul id="mIng" style="margin-bottom:30px; padding-left:20px; list-style:none;"></ul>
+
+                <h3 style="font-size:1.1rem; margin-bottom:15px;">Приготування</h3>
+                <ol id="mSteps" style="padding-left:20px; font-size:1rem; line-height:1.7; color:#374151;"></ol>
+
+                <div class="reviews-section">
+                    <h3 class="section-label" style="margin-bottom:15px;">Відгуки та оцінки</h3>
+                    <div class="review-form">
+                        <div class="star-rating" id="starRating">
+                            <span data-val="1">★</span><span data-val="2">★</span><span data-val="3">★</span><span
+                                data-val="4">★</span><span data-val="5">★</span>
+                        </div>
+                        <textarea id="reviewText" rows="2" placeholder="Напишіть, як вам страва..."></textarea>
+                        <button onclick="sendReview()" class="pill-btn active"
+                            style="width:100%; background:#A10404; border-color:#A10404; color:white;">Надіслати
+                            відгук</button>
+                    </div>
+                    <div id="reviewsList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/db.js"></script>
+    <script src="js/chat.js"></script>
+
+    <script>
+        const ingredientsBase = [
+            "Яйця", "Молоко", "Сир твердий", "Масло вершкове", "Сметана", "Йогурт",
+            "Курка", "Фарш", "Свинина", "Ковбаса", "Бекон", "Риба", "Тунець",
+            "Картопля", "Морква", "Цибуля", "Помідори", "Огірки", "Часник", "Перець", "Капуста",
+            "Рис", "Макарони", "Гречка", "Борошно", "Хліб",
+            "Яблука", "Банани", "Лимон", "Апельсини", "Ягоди",
+            "Цукор", "Сіль", "Олія", "Мед", "Кетчуп", "Майонез"
+        ];
+
+        const allergensBase = [
+            "Горіхи", "Арахіс", "Фундук", "Мигдаль", "Фісташки", "Кеш'ю",
+            "Молоко", "Лактоза",
+            "Яйця",
+            "Глютен", "Пшениця", "Жито", "Ячмінь",
+            "Риба",
+            "Морепродукти", "Креветки", "Мідії", "Кальмари",
+            "Соєві продукти", "Соєве молоко", "Тофу",
+            "Селера", "Гірчиця", "Кунжут"
+        ];
+
+        let allRecipes = [];
+        let savedRecipeIds = new Set();
+        let currentUser = null;
+        let currentRecipeId = null;
+        let currentRating = 0;
+
+        // Головний стейт
+        let state = {
+            type: 'all',
+            have: new Set(),
+            maxMissing: 5,
+            recipeSearch: '',
+            features: new Set(),
+            spice: 'all',
+            allergies: new Set()
+        };
+
+        // Мапа особливостей → людські лейбли
+        const featureLabels = {
+                is_vegan: 'Веганське',
+                is_vegetarian: 'Вегетаріанське',
+                lactose_free: 'Без лактози',
+                is_gluten_free: 'Без глютену',
+                pescetarian: 'Пескетаріанське',
+                nut_free: 'Без горіхів',
+                citrus_free: 'Без цитрусових'
+            };
+
+
+        function spiceLabel(val) {
+            if (val === 'none') return 'Не гостре';
+            if (val === 'medium') return 'Середньо гостре';
+            if (val === 'hot') return 'Гостре';
+            return null;
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            currentUser = user;
+
+            // Відновлення стану з localStorage
+            const savedTags = localStorage.getItem('myFridge');
+            if (savedTags) {
+                JSON.parse(savedTags).forEach(tag => state.have.add(tag.toLowerCase()));
+            }
+
+            const savedAllergies = localStorage.getItem('myAllergies');
+            if (savedAllergies) {
+                JSON.parse(savedAllergies).forEach(a => state.allergies.add(a.toLowerCase()));
+            }
+
+            const missingRangeEl = document.getElementById('missingRange');
+            const missingLabelEl = document.getElementById('missingLabel');
+            if (missingRangeEl && missingLabelEl) {
+                missingRangeEl.value = state.maxMissing;
+                missingLabelEl.textContent = state.maxMissing;
+            }
+
+            setupHandlers();
+            renderTags();
+            renderAllergyTags();
+
+            if (currentUser) await fetchSavedRecipes();
+            await fetchRecipes();
+
+            // Зірочки рейтингу
+            const stars = document.querySelectorAll('#starRating span');
+            stars.forEach(star => star.onclick = () => {
+                currentRating = star.dataset.val;
+                stars.forEach(s => s.classList.toggle('active', Number(s.dataset.val) <= Number(currentRating)));
+            });
+        });
+
+        async function fetchSavedRecipes() {
+            const { data } = await supabase.from('saved_recipes').select('recipe_id').eq('user_id', currentUser.id);
+            if (data) savedRecipeIds = new Set(data.map(i => i.recipe_id));
+        }
+
+        async function fetchRecipes() {
+            let { data, error } = await supabase
+                .from('recipes')
+                .select('*, profiles(id, full_name, avatar_url)')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.warn("Помилка завантаження автора:", error.message);
+                const res = await supabase.from('recipes').select('*').order('created_at', { ascending: false });
+                data = res.data;
+            }
+            allRecipes = data || [];
+            applyFilters();
+        }
+
+        // Перевірка, чи рецепт має конкретну особливість
+       function recipeHasFeature(r, featureKey) {
+            return Boolean(r[featureKey]);
+        }
+
+        // Отримати всі особливості рецепта
+        function getRecipeFeatures(r) {
+            const keys = Object.keys(featureLabels);
+            return keys.filter(k => recipeHasFeature(r, k));
+        }
+
+        function applyFilters() {
+            const filtered = allRecipes.filter(r => {
+                // 1. Пошук за назвою
+                if (state.recipeSearch && state.recipeSearch.trim() !== '') {
+                    if (!r.title || !r.title.toLowerCase().includes(state.recipeSearch)) {
+                        return false;
+                    }
+                }
+
+                // 2. Тип страви
+                if (state.type !== 'all' && r.category !== state.type) return false;
+
+                // 3. Особливості (перевіряємо, що всі вибрані особливості є true у рецепті)
+                if (state.features.size > 0) {
+                    for (let key of state.features) {
+                        if (!r[key]) return false;
+                    }
+                }
+
+
+                // 4. Гострота (підв'язка по spiciness)
+                if (state.spice !== 'all') {
+                    if (!r.spiciness || r.spiciness !== state.spice) return false;
+                }
+
+                // 5. Алергії (якщо в інгредієнтах є щось з алергенів — виключаємо рецепт)
+                if (state.allergies.size > 0 && Array.isArray(r.ingredients)) {
+                    const hasAllergen = r.ingredients.some(ing => {
+                        const n = (ing.name || '').toLowerCase();
+                        return Array.from(state.allergies).some(a => n.includes(a));
+                    });
+                    if (hasAllergen) return false;
+                }
+
+                // 6. Інгредієнти в холодильнику + відсутні
+                if (!r.ingredients || !Array.isArray(r.ingredients)) return true;
+
+                let missingCount = 0;
+                const missingList = [];
+
+                r.ingredients.forEach(ing => {
+                    const name = (ing.name || '').toLowerCase().trim();
+                    let found = false;
+                    for (let h of state.have) {
+                        if (name.includes(h) || h.includes(name)) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        missingCount++;
+                        missingList.push(ing.name);
+                    }
+                });
+                r.missingList = missingList;
+
+                if (parseInt(state.maxMissing, 10) === 5) {
+                    return true;
+                }
+                return missingCount <= state.maxMissing;
+            });
+
+            renderRecipes(filtered);
+        }
+
+        function renderRecipes(list) {
+                const container = document.getElementById('recipesContainer');
+                document.getElementById('resCount').textContent = list.length;
+                container.innerHTML = "";
+
+                if (list.length === 0) {
+                    container.innerHTML = `
+            <div style="grid-column:1/-1; padding:40px; text-align:center; color:#9ca3af;">
+                Нічого не знайдено<br>Спробуйте змінити фільтри.
+            </div>`;
+                    return;
+                }
+
+                list.forEach(r => {
+                    const card = document.createElement('article');
+                    card.className = 'recipe-card';
+
+                    // картинка
+                    let imgUrl = '';
+                    if (r.image_url) {
+                        if (Array.isArray(r.image_url) && r.image_url.length > 0) imgUrl = r.image_url[0];
+                        else if (typeof r.image_url === 'string') imgUrl = r.image_url;
+                    }
+
+                    const bgStyle = imgUrl
+                        ? `background-image: url('${imgUrl}'); background-size:cover; background-position:center;`
+                        : 'background: linear-gradient(135deg, #fee2e2, #fecaca);';
+
+                    const isSaved = savedRecipeIds.has(r.id);
+
+                    // бейдж "Є все / Бракує N"
+                    let badge = '';
+                    if (!state.recipeSearch) {
+                        const missingCount = r.missingList ? r.missingList.length : 0;
+                        badge = missingCount === 0
+                            ? `<span class="tag tag-good">Є все</span>`
+                            : `<span class="tag tag-missing">Бракує ${missingCount}</span>`;
+                    }
+
+                    // особливості та гострота
+                    const recipeFeatures = getRecipeFeatures(r);
+                    const spiceText = spiceLabel(r.spiciness);
+
+                    let featuresHtml = '';
+                    recipeFeatures.forEach(fKey => {
+                        const label = featureLabels[fKey] || fKey;
+                        featuresHtml += `<span class="tag tag-feature">${label}</span>`;
+                    });
+
+                    let spiceHtml = '';
+                    if (spiceText) {
+                        spiceHtml = `<span class="tag tag-spice">${spiceText}</span>`;
+                    }
+
+                    card.innerHTML = `
+            <div class="recipe-img" style="${bgStyle}"></div>
+            <button class="card-heart-btn ${isSaved ? 'saved' : ''}"
+                    onclick="toggleMainSave(event, '${r.id}')">♥</button>
+            <div class="card-content">
+                <div class="recipe-title">${r.title}</div>
+                <div class="recipe-meta">
+                    <span>⏱ ${r.time_minutes || 0} хв</span>
+                    <span>${r.calories || 0} ккал</span>
+                </div>
+                <div class="meta-tags-row">
+                    ${featuresHtml}
+                    ${spiceHtml}
+                </div>
+                <div style="margin-top:auto;">${badge}</div>
+            </div>
+        `;
+
+                    card.onclick = (e) => {
+                        if (!e.target.classList.contains('card-heart-btn')) openModal(r);
+                    };
+                    container.appendChild(card);
+                });
+            }
+
+
+
+        async function toggleMainSave(e, id) {
+            e.stopPropagation();
+            if (!currentUser) return alert("Увійдіть, щоб зберігати!");
+            const btn = e.target;
+            const isSaved = btn.classList.contains('saved');
+            if (isSaved) {
+                await supabase.from('saved_recipes').delete().match({ user_id: currentUser.id, recipe_id: id });
+                btn.classList.remove('saved');
+                savedRecipeIds.delete(id);
+            } else {
+                await supabase.from('saved_recipes').insert([{ user_id: currentUser.id, recipe_id: id }]);
+                btn.classList.add('saved');
+                savedRecipeIds.add(id);
+            }
+        }
+
+        async function openModal(r) {
+                currentRecipeId = r.id;
+
+                // назва, час, калорії
+                document.getElementById('mTitle').textContent = r.title;
+                document.getElementById('mTime').textContent = `⏱ ${r.time_minutes || 0} хв`;
+                document.getElementById('mCal').textContent = `${r.calories || 0} ккал`;
+
+                // 🔥 БЖВ тільки в самому рецепті
+                const p = r.protein ?? 0;
+                const f = r.fat ?? 0;
+                const c = r.carbs ?? 0;
+                const macrosEl = document.getElementById('mMacros');
+                if (macrosEl) {
+                    macrosEl.textContent = `білки: ${p}г | жири: ${f}г | вуглеводи: ${c}г`;
+                }
+
+                // галерея
+                const gallery = document.getElementById('mGallery');
+                gallery.innerHTML = '';
+                let photos = (r.image_url && Array.isArray(r.image_url))
+                    ? r.image_url
+                    : (r.image_url ? [r.image_url] : []);
+                if (photos.length === 0) {
+                    const empty = document.createElement('div');
+                    empty.style.width = '100%';
+                    empty.style.height = '100%';
+                    gallery.appendChild(empty);
+                } else {
+                    photos.forEach(url => {
+                        const img = document.createElement('img');
+                        img.src = url;
+                        gallery.appendChild(img);
+                    });
+                }
+
+                document.getElementById('btnPrev').style.display = photos.length > 1 ? 'flex' : 'none';
+                document.getElementById('btnNext').style.display = photos.length > 1 ? 'flex' : 'none';
+
+                // автор
+                const authBlock = document.getElementById('mAuthor');
+                if (r.profiles) {
+                    authBlock.style.display = 'flex';
+                    const ava = r.profiles.avatar_url || '';
+                    let avaHtml = '';
+                    if (ava && ava.startsWith('http')) {
+                        avaHtml = `<img src="${ava}" class="author-avatar">`;
+                    } else {
+                        avaHtml = `
+                <div class="author-avatar"
+                     style="display:flex;align-items:center;justify-content:center;
+                            background:#fff7ed;font-size:0.85rem;color:#4b5563;">
+                    FM
+                </div>`;
+                    }
+
+                    authBlock.innerHTML = `
+            ${avaHtml}
+            <div class="author-info">
+                <span class="author-label">Автор рецепта</span>
+                <a href="profile.html?id=${r.profiles.id}" class="author-link">
+                    ${r.profiles.full_name}
+                </a>
+            </div>
+        `;
+                } else {
+                    authBlock.style.display = 'none';
+                }
+
+                // інгредієнти
+                const ul = document.getElementById('mIng');
+                ul.innerHTML = '';
+                if (r.ingredients) r.ingredients.forEach(ing => {
+                    const li = document.createElement('li');
+                    li.style.marginBottom = '8px';
+                    let haveIt = false;
+                    if (!state.recipeSearch) {
+                        haveIt = Array.from(state.have).some(h => (ing.name || '').toLowerCase().includes(h));
+                    } else {
+                        haveIt = true;
+                    }
+                    li.innerHTML =
+                        `<span style="color:${haveIt ? '#111' : '#A10404'}">
+                <b>${ing.name}</b>: ${ing.amount}
+             </span>`;
+                    ul.appendChild(li);
+                });
+
+                // кроки
+                const ol = document.getElementById('mSteps');
+                ol.innerHTML = '';
+                if (r.steps) r.steps.forEach(s => {
+                    const li = document.createElement('li');
+                    li.textContent = s;
+                    li.style.marginBottom = '10px';
+                    ol.appendChild(li);
+                });
+
+                // теги особливостей + гострота
+                const mMetaTags = document.getElementById('mMetaTags');
+                mMetaTags.innerHTML = '';
+                const recipeFeatures = getRecipeFeatures(r);
+                recipeFeatures.forEach(fKey => {
+                    const label = featureLabels[fKey] || fKey;
+                    mMetaTags.innerHTML += `<span class="tag tag-feature">${label}</span>`;
+                });
+                const sLabel = spiceLabel(r.spiciness);
+                if (sLabel) {
+                    mMetaTags.innerHTML += `<span class="tag tag-spice"> ${sLabel}</span>`;
+                }
+
+                checkIfSavedInModal();
+                loadReviews();
+                document.getElementById('recipeModal').classList.add('show');
+            }
+
+
+        function closeModal() {
+            document.getElementById('recipeModal').classList.remove('show');
+        }
+
+        function scrollGallery(dir) {
+            const g = document.getElementById('mGallery');
+            g.scrollBy({ left: g.clientWidth * dir, behavior: 'smooth' });
+        }
+
+        async function sendReview() {
+            if (!currentUser) return alert("Увійдіть!");
+            const text = document.getElementById('reviewText').value;
+            if (!currentRating) return alert("Оберіть оцінку!");
+            const { error } = await supabase.from('reviews').insert([{
+                recipe_id: currentRecipeId,
+                user_id: currentUser.id,
+                rating: currentRating,
+                comment: text
+            }]);
+            if (!error) {
+                document.getElementById('reviewText').value = "";
+                currentRating = 0;
+                document.querySelectorAll('#starRating span').forEach(s => s.classList.remove('active'));
+                loadReviews();
+            }
+        }
+
+        async function loadReviews() {
+            const list = document.getElementById('reviewsList');
+            list.innerHTML = '...';
+            const { data: reviews } = await supabase.from('reviews')
+                .select('*, profiles(full_name)')
+                .eq('recipe_id', currentRecipeId)
+                .order('created_at', { ascending: false });
+
+            list.innerHTML = '';
+            if (!reviews || !reviews.length) {
+                list.innerHTML = '<p style="color:#888; font-size:0.9rem;">Немає відгуків.</p>';
+                return;
+            }
+            reviews.forEach(rev => {
+                const div = document.createElement('div');
+                div.className = 'review-item';
+                const stars = '★'.repeat(rev.rating);
+                const name = rev.profiles ? rev.profiles.full_name : 'Гість';
+                const canDelete = currentUser && currentUser.id === rev.user_id;
+
+                div.innerHTML = `
+                    <div class="review-author">
+                        <span>${name}</span>
+                        <span>
+                            <span style="color:#fbbf24;">${stars}</span>
+                            ${canDelete ? `
+                                <button class="reset-link" style="margin-left:8px;" onclick="deleteReview('${rev.id}')">
+                                    Видалити
+                                </button>
+                            ` : ''}
+                        </span>
+                    </div>
+                    <div class="review-text">${rev.comment || ''}</div>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        async function deleteReview(reviewId) {
+            if (!currentUser) {
+                alert("Увійдіть, щоб видаляти відгуки!");
+                return;
+            }
+            const { error } = await supabase
+                .from('reviews')
+                .delete()
+                .match({
+                    id: reviewId,
+                    user_id: currentUser.id
+                });
+
+            if (error) {
+                console.error('Помилка видалення відгуку:', error.message);
+                alert("Не вдалося видалити відгук. Спробуйте пізніше.");
+                return;
+            }
+            loadReviews();
+        }
+
+        const btnSaveModal = document.getElementById('btnSaveModal');
+        btnSaveModal.onclick = async () => {
+            if (!currentUser) return alert("Увійдіть!");
+            if (btnSaveModal.classList.contains('saved')) {
+                await supabase.from('saved_recipes').delete().match({
+                    user_id: currentUser.id,
+                    recipe_id: currentRecipeId
+                });
+                btnSaveModal.classList.remove('saved');
+                savedRecipeIds.delete(currentRecipeId);
+            } else {
+                await supabase.from('saved_recipes').insert([{
+                    user_id: currentUser.id,
+                    recipe_id: currentRecipeId
+                }]);
+                btnSaveModal.classList.add('saved');
+                savedRecipeIds.add(currentRecipeId);
+            }
+            applyFilters();
+        };
+
+        function checkIfSavedInModal() {
+            btnSaveModal.classList.remove('saved');
+            if (savedRecipeIds.has(currentRecipeId)) btnSaveModal.classList.add('saved');
+        }
+
+        // --- АВТОПІДКАЗКИ ДЛЯ ХОЛОДИЛЬНИКА ТА АЛЕРГЕНІВ ---
+
+        const ingInput = document.getElementById('ingInput');
+        const suggestionsBox = document.getElementById('suggestionsBox');
+        const allergyInput = document.getElementById('allergyInput');
+        const allergySuggestionsBox = document.getElementById('allergySuggestions');
+
+        if (ingInput && suggestionsBox) {
+            ingInput.addEventListener('input', (e) => {
+                const val = e.target.value.toLowerCase().trim();
+                suggestionsBox.innerHTML = '';
+                if (val.length < 1) {
+                    suggestionsBox.style.display = 'none';
+                    return;
+                }
+                const matches = ingredientsBase.filter(ing =>
+                    ing.toLowerCase().includes(val) && !state.have.has(ing.toLowerCase())
+                );
+                if (matches.length > 0) {
+                    suggestionsBox.style.display = 'block';
+                    matches.forEach(ing => {
+                        const div = document.createElement('div');
+                        div.className = 'suggestion-item';
+                        div.textContent = ing;
+                        div.onclick = () => {
+                            addTag(ing);
+                            ingInput.value = '';
+                            suggestionsBox.style.display = 'none';
+                        };
+                        suggestionsBox.appendChild(div);
+                    });
+                } else {
+                    suggestionsBox.style.display = 'none';
+                }
+            });
+        }
+
+        if (allergyInput && allergySuggestionsBox) {
+            allergyInput.addEventListener('input', (e) => {
+                const val = e.target.value.toLowerCase().trim();
+                allergySuggestionsBox.innerHTML = '';
+                if (val.length < 1) {
+                    allergySuggestionsBox.style.display = 'none';
+                    return;
+                }
+                const matches = allergensBase.filter(a =>
+                    a.toLowerCase().includes(val) && !state.allergies.has(a.toLowerCase())
+                );
+                if (matches.length > 0) {
+                    allergySuggestionsBox.style.display = 'block';
+                    matches.forEach(a => {
+                        const div = document.createElement('div');
+                        div.className = 'suggestion-item';
+                        div.textContent = a;
+                        div.onclick = () => {
+                            addAllergy(a);
+                            allergyInput.value = '';
+                            allergySuggestionsBox.style.display = 'none';
+                        };
+                        allergySuggestionsBox.appendChild(div);
+                    });
+                } else {
+                    allergySuggestionsBox.style.display = 'none';
+                }
+            });
+
+            allergyInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const val = allergyInput.value.trim();
+                    if (val) {
+                        addAllergy(val);
+                        allergyInput.value = '';
+                        allergySuggestionsBox.style.display = 'none';
+                    }
+                }
+            });
+        }
+
+        document.addEventListener('click', (e) => {
+            if (ingInput && suggestionsBox &&
+                !ingInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
+                suggestionsBox.style.display = 'none';
+            }
+            if (allergyInput && allergySuggestionsBox &&
+                !allergyInput.contains(e.target) && !allergySuggestionsBox.contains(e.target)) {
+                allergySuggestionsBox.style.display = 'none';
+            }
+        });
+
+        // --- ТЕГИ ХОЛОДИЛЬНИКА ---
+
+        function addTag(name) {
+            const lower = name.toLowerCase();
+            state.have.add(lower);
+            localStorage.setItem('myFridge', JSON.stringify(Array.from(state.have)));
+            renderTags();
+            applyFilters();
+        }
+
+        function removeTag(name) {
+            state.have.delete(name.toLowerCase());
+            localStorage.setItem('myFridge', JSON.stringify(Array.from(state.have)));
+            renderTags();
+            applyFilters();
+        }
+
+        function clearTags() {
+            state.have.clear();
+            localStorage.setItem('myFridge', JSON.stringify([]));
+            renderTags();
+            applyFilters();
+        }
+
+        function renderTags() {
+            const container = document.getElementById('selectedTags');
+            if (!container) return;
+            container.innerHTML = '';
+            state.have.forEach(ing => {
+                const label = ing.charAt(0).toUpperCase() + ing.slice(1);
+                container.innerHTML += `<div class="ing-tag">${label} <span onclick="removeTag('${ing}')">×</span></div>`;
+            });
+        }
+
+        // --- ТЕГИ АЛЕРГЕНІВ ---
+
+        function addAllergy(name) {
+            const lower = name.toLowerCase().trim();
+            if (!lower) return;
+            state.allergies.add(lower);
+            localStorage.setItem('myAllergies', JSON.stringify(Array.from(state.allergies)));
+            renderAllergyTags();
+            applyFilters();
+        }
+
+        function removeAllergy(name) {
+            const lower = name.toLowerCase();
+            state.allergies.delete(lower);
+            localStorage.setItem('myAllergies', JSON.stringify(Array.from(state.allergies)));
+            renderAllergyTags();
+            applyFilters();
+        }
+
+        function clearAllergies() {
+            state.allergies.clear();
+            localStorage.setItem('myAllergies', JSON.stringify([]));
+            renderAllergyTags();
+            applyFilters();
+        }
+
+        function renderAllergyTags() {
+            const container = document.getElementById('allergyTags');
+            if (!container) return;
+            container.innerHTML = '';
+            state.allergies.forEach(a => {
+                const label = a.charAt(0).toUpperCase() + a.slice(1);
+                container.innerHTML += `
+                    <div class="ing-tag">
+                        🚫 ${label}
+                        <span onclick="removeAllergy('${a}')">×</span>
+                    </div>
+                `;
+            });
+        }
+
+        function setupHandlers() {
+            // Тип страви
+            document.querySelectorAll('#mealTypeRow button').forEach(btn => {
+                btn.onclick = () => {
+                    document.querySelectorAll('#mealTypeRow button').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    state.type = btn.dataset.type;
+                    applyFilters();
+                }
+            });
+
+            // Особливості — мульти-вибір
+            const featuresRow = document.getElementById('featuresRow');
+            if (featuresRow) {
+                featuresRow.querySelectorAll('button').forEach(btn => {
+                    btn.onclick = () => {
+                        const feature = btn.dataset.feature;
+                        const isActive = btn.classList.toggle('active');
+                        if (isActive) {
+                            state.features.add(feature);
+                        } else {
+                            state.features.delete(feature);
+                        }
+                        applyFilters();
+                    };
+                });
+            }
+
+            // Гострота — одиночний вибір, з можливістю скинути
+            const spiceRow = document.getElementById('spiceRow');
+            if (spiceRow) {
+                spiceRow.querySelectorAll('button').forEach(btn => {
+                    btn.onclick = () => {
+                        const val = btn.dataset.spice;
+                        if (btn.classList.contains('active')) {
+                            btn.classList.remove('active');
+                            state.spice = 'all';
+                            applyFilters();
+                            return;
+                        }
+                        spiceRow.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        state.spice = val;
+                        applyFilters();
+                    };
+                });
+            }
+
+            // Пошук за назвою
+            document.getElementById('recipeSearch').oninput = (e) => {
+                state.recipeSearch = e.target.value.toLowerCase();
+                applyFilters();
+            };
+
+            // Слайдер відсутніх
+            document.getElementById('missingRange').oninput = (e) => {
+                state.maxMissing = Number(e.target.value);
+                document.getElementById('missingLabel').textContent = e.target.value;
+                applyFilters();
+            };
+        }
+
+        function clearAllFilters() {
+                // 1. Скидаємо тип страви
+                state.type = 'all';
+                document.querySelectorAll('#mealTypeRow button').forEach(btn => btn.classList.remove('active'));
+                document.querySelector('#mealTypeRow button[data-type="all"]').classList.add('active');
+
+                // 2. Скидаємо особливості
+                state.features.clear();
+                document.querySelectorAll('#featuresRow .pill-btn').forEach(btn => btn.classList.remove('active'));
+
+                // 3. Скидаємо гостроту
+                state.spice = 'all';
+                document.querySelectorAll('#spiceRow .pill-btn').forEach(btn => btn.classList.remove('active'));
+
+                // 4. Скидаємо інгредієнти в холодильнику
+                state.have.clear();
+                localStorage.setItem('myFridge', '[]');
+                renderTags();
+
+                // 5. Скидаємо алергії
+                state.allergies.clear();
+                localStorage.setItem('myAllergies', '[]');
+                renderAllergyTags();
+
+                // 6. Скидаємо пошук
+                state.recipeSearch = '';
+                document.getElementById('recipeSearch').value = '';
+
+                // 7. Скидаємо слайдер відсутніх
+                state.maxMissing = 5;
+                document.getElementById('missingRange').value = 5;
+                document.getElementById('missingLabel').textContent = '5';
+
+                // Оновити результати
+                applyFilters();
+            }
+
+    </script>
+</body>
+
+</html>
