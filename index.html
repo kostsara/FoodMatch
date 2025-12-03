@@ -1538,10 +1538,13 @@
                 const stars = '★'.repeat(rev.rating);
                 const name = rev.profiles ? rev.profiles.full_name : 'Гість';
                 const canDelete = currentUser && currentUser.id === rev.user_id;
+                const profileUrl = `profile.html?id=${rev.user_id}`;
 
                 div.innerHTML = `
                     <div class="review-author">
-                        <span>${name}</span>
+                        <a href="${profileUrl}" class="author-link">
+    ${name}
+</a>
                         <span>
                             <span style="color:#fbbf24;">${stars}</span>
                             ${canDelete ? `
