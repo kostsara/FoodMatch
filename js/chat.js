@@ -56,6 +56,7 @@ let currentReply = null;
 // 2. УПРАВЛІННЯ ВІКНОМ
 async function toggleChat() {
     const win = document.getElementById('chatWindow');
+    
     if (win.classList.contains('open')) {
         win.classList.remove('open');
     } else {
@@ -95,6 +96,13 @@ function renderOneMessage(msg) {
 
     const myId = chatUser ? chatUser.id : null;
     const isMe = msg.user_id === myId;
+    const profileLinkHtml = `
+    <div class="msg-author">
+        <a href="profile.html?id=${msg.user_id}" class="msg-user-link">
+            ${escapeHtml(msg.user_name)}
+        </a>
+    </div>
+`;
 
     const row = document.createElement('div');
     row.id = `msg-row-${msg.id}`;
@@ -129,7 +137,7 @@ function renderOneMessage(msg) {
 
     row.innerHTML = `
         <div class="msg-bubble">
-            ${!isMe ? `<div class="msg-author">${msg.user_name}</div>` : ''}
+            ${!isMe ? profileLinkHtml : ''} 
             ${quoteHtml}
             ${contentHtml}
         </div>
